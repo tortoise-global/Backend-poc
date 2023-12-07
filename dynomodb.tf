@@ -1,5 +1,5 @@
 
-resource "aws_dynamodb_table" "bookmark-test" {
+resource "aws_dynamodb_table" "bookmark-test1.0" {
   name           = "bookmark-test"
   billing_mode   = "PAY_PER_REQUEST"
 
