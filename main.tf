@@ -33,6 +33,12 @@ module "vpc-infra" {
   public_subnet_cidrs  = local.public_subnet_cidrs
   private_subnet_cidrs = local.private_subnet_cidrs
 }
+
+
+module "tf-state" {
+  source      = "./modules/tf-state"
+  bucket_name = "tf-state-backend-ci-cd"
+}
 */
 
 
@@ -53,10 +59,6 @@ provider "aws" {
   region = "ap-south-1"
 }
 
-module "tf-state" {
-  source      = "./modules/tf-state"
-  bucket_name = "tf-state-backend-ci-cd"
-}
 
 
 
