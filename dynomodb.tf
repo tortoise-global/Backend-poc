@@ -16,3 +16,19 @@ resource "aws_dynamodb_table" "bookmarksample" {
   hash_key = "postid"
   range_key = "userid"
 }
+
+
+
+resource "aws_dynamodb_table" "lastbookmarksampletest" {
+  name           = "lastbookmarksampletest"
+  billing_mode   = "PAY_PER_REQUEST"
+
+  attribute {
+    name = "postid"
+    type = "S"
+  }
+  
+
+  hash_key = "postid"
+
+}
