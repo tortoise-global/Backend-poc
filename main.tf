@@ -1,45 +1,3 @@
-/*
-resource "aws_s3_bucket" "tf_state_bucket" {
-  bucket = "turtilbacendtf"
-  acl    = "private" # ACL for the bucket, you can modify this as needed
-
-  tags = {
-    Name = "TerraformStateBucket"
-  }
-}
-
-
-
-terraform {
-  backend "s3" {
-    bucket = turtilbacendtf
-    key    = "turtlebackend.tfstate"
-    region = "ap-south-1"
-  }
-}
-
-provider "aws" {
-  region = "ap-south-1"
-}
-
-
-
-module "vpc-infra" {
-  source = "./modules/vpc"
-
-  # VPC Input Vars
-  vpc_cidr             = local.vpc_cidr
-  availability_zones   = local.availability_zones
-  public_subnet_cidrs  = local.public_subnet_cidrs
-  private_subnet_cidrs = local.private_subnet_cidrs
-}
-
-
-module "tf-state" {
-  source      = "./modules/tf-state"
-  bucket_name = "tf-state-backend-ci-cd"
-}
-*/
 
 
 terraform {
@@ -55,8 +13,9 @@ terraform {
 
 }
 
+
 provider "aws" {
-  region = "ap-south-1"
+  region = "us-east-1"
 }
 
 
