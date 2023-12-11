@@ -3,9 +3,11 @@ import json
 def lambda_handler(event, context):
     print('Event: ', event)
     response_message = 'Hello, World!'
+    
+    if event['httpMethod'] == 'GET':
 
-    if 'queryStringParameters' in event and event['queryStringParameters'] and 'Name' in event['queryStringParameters']:
-        response_message = 'Hello, ' + event['queryStringParameters']['Name'] + '!'
+        if 'queryStringParameters' in event and event['queryStringParameters'] and 'Name' in event['queryStringParameters']:
+            response_message = 'Hello, ' + event['queryStringParameters']['Name'] + '!'
 
     if event['httpMethod'] == 'POST':
         body = json.loads(event['body'])
