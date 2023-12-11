@@ -9,44 +9,35 @@ pipeline {
     }
 
    agent  any
-    stages {
-        stage('checkout') {
+     stages {
+        stage ("checkout from GIT") {
             steps {
-                 script{
-                        dir("terraform")
-                        {
-                            git "https://github.com/yeshwanthlm/Terraform-Jenkins.git"
-                        }
-                    }
-                }
-            }
-
-        stage('Plan') {
-            steps {
-                sh 'terraform init'
-                sh "terraform plan -out tfplan"
-                sh 'terraform show -no-color tfplan > tfplan.txt'
+                git branch: 'main', credentialsId: 'rajsekhar', url: 'https://github.com/tortoise-NRI/Backend-poc.git'
             }
         }
-        stage('Approval') {
-           when {
-               not {
-                   equals expected: true, actual: params.autoApprove
-               }
-           }
-
-           steps {
-               script {
-                    def plan = readFile 'terraform/tfplan.txt'
-                    input message: "Do you want to apply the plan?",
-                    parameters: [text(name: 'Plan', description: 'Please review the plan', defaultValue: plan)]
-               }
-           }
-       }
-
-        stage('Apply') {
+        stage ("terraform init") {
             steps {
-                sh "terraform apply -input=false tfplan"
+                sh 'terraform init'
+            }
+        }
+        stage ("terraform fmt") {
+            steps {
+                sh 'terraform fmt'
+            }
+        }
+        stage ("terraform validate") {
+            steps {
+                sh 'terraform validate'
+            }
+        }
+        stage ("terrafrom plan") {
+            steps {
+                sh 'terraform plan '
+            }
+        }
+        stage ("terraform apply") {
+            steps {
+                sh 'terraform apply --auto-approve'
             }
         }
     }
