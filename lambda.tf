@@ -51,7 +51,7 @@ resource "aws_lambda_function" "BACKEND-POC" {
   s3_key    = aws_s3_object.lambda_BACKEND-POC.key
 
   runtime = "python3.11"
-  handler = "function.handler"
+  handler = "function.lambda_handler"
 
   source_code_hash = data.archive_file.lambda_BACKEND-POC.output_base64sha256
 
@@ -67,8 +67,8 @@ resource "aws_cloudwatch_log_group" "BACKEND-POC" {
 data "archive_file" "lambda_BACKEND-POC" {
   type = "zip"
 
-  source_dir  = "../${path.module}/BACKEND-POC"
-  output_path = "../${path.module}/BACKEND-POC.zip"
+  source_file  = "function.py"
+  output_path = "BACKEND-POC.zip"
 }
 
 resource "aws_s3_object" "lambda_BACKEND-POC" {
