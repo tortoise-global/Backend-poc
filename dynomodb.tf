@@ -48,3 +48,19 @@ resource "aws_dynamodb_table" "bookmark_example" {
   hash_key = "postid"
 
 }
+
+
+resource "aws_dynamodb_table" "lastbookmark_example" {
+  name           = "lastbookmark_example"
+  billing_mode   = "PAY_PER_REQUEST"
+
+  attribute {
+    name = "postid"
+    type = "S"
+  }
+  
+
+  hash_key = "postid"
+
+}
+
