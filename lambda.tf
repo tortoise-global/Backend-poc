@@ -104,6 +104,15 @@ resource "aws_iam_policy" "dynamodb_policy" {
   })
 }
 
+# Attach policy to Lambda's role
+resource "aws_iam_role_policy_attachment" "dynamodb_policy_attachment" {
+  policy_arn = aws_iam_policy.dynamodb_policy.arn
+  role       = aws_iam_role.BACKEND-POC_lambda_exec.name
+
+}
+
+
+
 //resource "aws_iam_policy_attachment" "dynamodb_policy_attachment" {
   //name       = "DynamoDBPolicyAttachment"
   //roles       = aws_iam_role.BACKEND-POC_lambda_exec.name
