@@ -80,3 +80,35 @@ resource "aws_s3_object" "lambda_BACKEND-POC" {
   etag = filemd5(data.archive_file.lambda_BACKEND-POC.output_path)
 }
 
+
+resource "aws_iam_policy" "dynamodb_policy" {
+  name        = "DynamoDBPolicy"
+  description = "Policy allowing basic DynamoDB operations"
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect   = "Allow",
+        Action   = [
+          "dynamodb:PutItem",
+          "dynamodb:GetItem",
+          "dynamodb:UpdateItem",
+          "dynamodb:DeleteItem",
+          "dynamodb:Scan",
+          "dynamodb:Query"
+        ],
+        Resource = "arn:aws:dynamodb:*:*:table/*" // Replace with specific table ARNs if needed
+      }
+    ]
+  })
+}
+
+//resource "aws_iam_policy_attachment" "dynamodb_policy_attachment" {
+  //name       = "DynamoDBPolicyAttachment"
+  //roles       = aws_iam_role.BACKEND-POC_lambda_exec.name
+  //roles      = [aws_iam_role.dynamodb_policy.id] // Replace with your DynamoDB role name
+  //policy_arn = aws_iam_policy.dynamodb_policy.arn
+  //policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+//}
+
