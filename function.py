@@ -45,14 +45,18 @@ def lambda_handler(event, context):
 
     try:
         http_method, route = event['httpMethod'], event['resource']
-        if http_method == 'DELETE' and route == '/bookmark/{id}':
-            item_id = event['pathParameters']['postid']
-            table.delete_item(Key={'postid': item_id})
-            body = f"Deleted item {item_id}"
-        elif http_method == 'GET' and route == '/bookmark/{id}':
-            item_id = event['pathParameters']['postid']
-            response = table.get_item(Key={'postid': item_id})
-            body = response.get('Item')
+        if http_method == 'DELETE' and route == '/bookmark':
+            if 'queryStringParameters' in event and event['queryStringParameters'] and 'postid' in event['queryStringParameters']:
+                item_id= event['queryStringParameters']['postid']
+                #item_id = event['pathParameters']['postid']
+                table.delete_item(Key={'postid': item_id})
+                body = f"Deleted item {item_id}"
+        elif http_method == 'GET' and route == '/bookmark/':
+             if 'queryStringParameters' in event and event['queryStringParameters'] and 'postid' in event['queryStringParameters']:
+                item_id= event['queryStringParameters']['postid']
+                #item_id = event['pathParameters']['postid']
+                response = table.get_item(Key={'postid': item_id})
+                body = response.get('Item')
         elif http_method == 'GET' and route == '/bookmark':
             response = table.scan()
             body = response.get('bookmark')
