@@ -59,6 +59,30 @@ resource "aws_apigatewayv2_route" "post_BACKEND-POC" {
   target    = "integrations/${aws_apigatewayv2_integration.lambda_BACKEND-POC.id}"
 }
 
+
+resource "aws_apigatewayv2_route" "getpostid_BACKEND-POC" {
+  api_id = aws_apigatewayv2_api.main.id
+
+  route_key = "GET /bookmark/"
+  target    = "integrations/${aws_apigatewayv2_integration.lambda_BACKEND-POC.id}"
+}
+
+
+resource "aws_apigatewayv2_route" "deletepost_BACKEND-POC" {
+  api_id = aws_apigatewayv2_api.main.id
+
+  route_key = "DELETE /bookmark/"
+  target    = "integrations/${aws_apigatewayv2_integration.lambda_BACKEND-POC.id}"
+}
+
+
+resource "aws_apigatewayv2_route" "updatepost_BACKEND-POC" {
+  api_id = aws_apigatewayv2_api.main.id
+
+  route_key = "UPDATE /bookmark"
+  target    = "integrations/${aws_apigatewayv2_integration.lambda_BACKEND-POC.id}"
+}
+
 resource "aws_lambda_permission" "api_gw" {
   statement_id  = "AllowExecutionFromAPIGateway"
   action        = "lambda:InvokeFunction"
