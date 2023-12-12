@@ -56,10 +56,10 @@ def lambda_handler(event, context):
                 item_id= event['queryStringParameters']['postid']
                 #item_id = event['pathParameters']['postid']
                 response = table.get_item(Key={'postid': item_id})
-                body = response.get('Items')
+                body = response
         elif http_method == 'GET' and route == '/bookmark':
             response = table.scan()
-            body = response.get('bookmark')
+            body = response.get('Items')
         elif http_method == 'PUT' and route == '/bookmark':
             request_json = json.loads(event['body'])
             table.put_item(
