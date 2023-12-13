@@ -35,8 +35,8 @@ resource "aws_dynamodb_table" "lastbookmarksampletest" {
 */
 
 
-resource "aws_dynamodb_table" "bookmark_example" {
-  name           = "bookmark_example"
+resource "aws_dynamodb_table" "post" {
+  name           = "post"
   billing_mode   = "PAY_PER_REQUEST"
 
   attribute {
@@ -50,17 +50,4 @@ resource "aws_dynamodb_table" "bookmark_example" {
 }
 
 
-resource "aws_dynamodb_table" "lastbookmark_example" {
-  name           = "lastbookmark_example"
-  billing_mode   = "PAY_PER_REQUEST"
-
-  attribute {
-    name = "postid"
-    type = "S"
-  }
-  
-
-  hash_key = "postid"
-
-}
 
