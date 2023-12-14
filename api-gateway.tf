@@ -1,12 +1,12 @@
 resource "aws_apigatewayv2_api" "main" {
-  name          = "main"
+  name          = "main"  // give your own name
   protocol_type = "HTTP"
 }
 
 resource "aws_apigatewayv2_stage" "dev" {
   api_id = aws_apigatewayv2_api.main.id
 
-  name        = "dev"
+  name        = "dev" // give your own name
   auto_deploy = true
 
   access_log_settings {
@@ -48,28 +48,28 @@ resource "aws_apigatewayv2_integration" "lambda_BACKEND-POC" {
 resource "aws_apigatewayv2_route" "get_BACKEND-POC" {
   api_id = aws_apigatewayv2_api.main.id
 
-  route_key = "GET /allpost"
+  route_key = "GET /allpost" // give your own endpoint name in place of allpost
   target    = "integrations/${aws_apigatewayv2_integration.lambda_BACKEND-POC.id}"
 }
 
 resource "aws_apigatewayv2_route" "post_BACKEND-POC" {
   api_id = aws_apigatewayv2_api.main.id
 
-  route_key = "POST /addpost"
+  route_key = "POST /addpost" // give your own endpoint name in place of addpost
   target    = "integrations/${aws_apigatewayv2_integration.lambda_BACKEND-POC.id}"
 }
 
 
 
-/*
+
 resource "aws_apigatewayv2_route" "deletepost_BACKEND-POC" {
   api_id = aws_apigatewayv2_api.main.id
 
-  route_key = "DELETE /post"
+  route_key = "DELETE /deletepostbypostid"
   target    = "integrations/${aws_apigatewayv2_integration.lambda_BACKEND-POC.id}"
 }
 
-
+/*
 resource "aws_apigatewayv2_route" "updatepost_BACKEND-POC" {
   api_id = aws_apigatewayv2_api.main.id
 

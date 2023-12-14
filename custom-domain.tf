@@ -2,12 +2,12 @@
 #create TLS certificate.
 
 resource "aws_acm_certificate" "api" {
-  domain_name       = "devapi.turtil.co" //give end-point or backend url name (TLS certificate)
+  domain_name       = "devapi.turtil.co" //give your own end-point or backend url name (TLS certificate)
   validation_method = "DNS"
 }
 
 data "aws_route53_zone" "public" {
-  name         = "turtil.co" // give your domain name
+  name         = "turtil.co" // give your  own domain name
   private_zone = false
 }
 

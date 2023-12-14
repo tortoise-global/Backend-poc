@@ -81,6 +81,22 @@ def lambda_handler(event, context):
                 'body': body,
                 'headers': headers
             }
+        
+        if http_method == 'DELETE' and route == '/deletepostbypostid':
+            if 'queryStringParameters' in event and event['queryStringParameters'] and 'postid' in event['queryStringParameters']:
+                item_id= event['queryStringParameters']['postid']
+                #item_id = event['pathParameters']['postid']
+                table.delete_item(Key={'postid': item_id})
+                body = f"Deleted item {item_id}"
+                body = json.dumps(body)
+                return {
+                'statusCode': status_code,
+                'body': body,
+                'headers': headers
+            }
+
+
+
         # # update post
         # elif http_method == 'PUT' and route == '/post':
         #     request_json = json.loads(event['body'])
