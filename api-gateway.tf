@@ -91,7 +91,7 @@ resource "aws_apigatewayv2_route" "get_BACKEND-POC" {
   api_id        = aws_apigatewayv2_api.main.id
   route_key     = "GET /allpost"
   target        = "integrations/${aws_apigatewayv2_integration.lambda_BACKEND-POC.id}"
-  authorizer_type    = "JWT"
+  authorization_type    = "JWT"
   authorization_scopes = ["openid"]  # Set the required scopes for authorization
   authorizer_id        = aws_apigatewayv2_authorizer.cognito_authorizer.id
 }
