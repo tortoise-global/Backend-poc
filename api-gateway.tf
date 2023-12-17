@@ -69,7 +69,7 @@ resource "aws_apigatewayv2_route" "deletepost_BACKEND-POC" {
   target    = "integrations/${aws_apigatewayv2_integration.lambda_BACKEND-POC.id}"
 }
 
-
+/*
 resource "aws_apigatewayv2_route" "addsignup_BACKEND-POC" {
   api_id = aws_apigatewayv2_api.main.id
 
@@ -84,7 +84,7 @@ resource "aws_apigatewayv2_route" "get_token_BACKEND-POC" {
   route_key = "GET /get_token" // give your own endpoint name in place of allpost
   target    = "integrations/${aws_apigatewayv2_integration.lambda_BACKEND-POC.id}"
 }
-
+*/
 
 
 resource "aws_lambda_permission" "api_gw" {
