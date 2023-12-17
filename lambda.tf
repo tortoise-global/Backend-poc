@@ -28,11 +28,13 @@ resource "aws_iam_role" "BACKEND-POC_lambda_exec" {
   "Version": "2012-10-17",
   "Statement": [
     {
+      "Sid": "AllowListTagsLogGroup",
       "Effect": "Allow",
       "Principal": {
         "Service": "lambda.amazonaws.com"
       },
-      "Action": "sts:AssumeRole"
+      "Action": "sts:AssumeRole, logs:ListTagsLogGroup",
+      "Resource": "*"
     }
   ]
 }
