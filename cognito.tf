@@ -1,5 +1,4 @@
 
-/*
 // Resources
 resource "aws_cognito_user_pool" "user_pool" {
   name = "user-pool"
@@ -30,7 +29,7 @@ resource "aws_cognito_user_pool" "user_pool" {
       min_length = 1
       max_length = 256
     }
-*/
+
 /*
     schema {
     name = "name"
@@ -53,10 +52,9 @@ resource "aws_cognito_user_pool" "user_pool" {
     required = true
   }
 */
-
- // }
-//}
-/*
+ }
+}
+/* // wrong config details
 resource "aws_cognito_user_pool_client" "client" {
   name                            = "cognito-client"
   user_pool_id                    = aws_cognito_user_pool.user_pool.id
@@ -73,7 +71,8 @@ resource "aws_cognito_user_pool_client" "client" {
   ]
 }
 */
-/*
+
+
 resource "aws_cognito_user_pool_client" "client" {
   name                            = "cognito-client"
   user_pool_id                    = aws_cognito_user_pool.user_pool.id
@@ -94,4 +93,3 @@ resource "aws_cognito_user_pool_domain" "cognito-domain" {
   domain       = "turtil"
   user_pool_id = aws_cognito_user_pool.user_pool.id
 }
-*/
