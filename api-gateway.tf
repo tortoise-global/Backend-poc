@@ -39,6 +39,7 @@ variable "AWS_REGION" {
   default     = "us-east-1"  # Set your preferred default AWS region here
 }
 
+/*
 resource "aws_apigatewayv2_authorizer" "cognito_authorizer" {
   api_id             = aws_apigatewayv2_api.main.id
   name               = "cognito-authorizer"
@@ -50,7 +51,7 @@ resource "aws_apigatewayv2_authorizer" "cognito_authorizer" {
   }
 }
 
-/*
+
 resource "aws_apigatewayv2_authorizer" "cognito_authorizer" {
   api_id             = aws_apigatewayv2_api.main.id
   name               = "cognito-authorizer"
@@ -75,6 +76,28 @@ resource "aws_apigatewayv2_integration" "lambda_BACKEND-POC" {
   integration_method = "POST"
 }
 
+resource "aws_apigatewayv2_authorizer" "cognito_authorizer" {
+  api_id             = aws_apigatewayv2_api.main.id
+  name               = "cognito-authorizer"
+  authorizer_type    = "JWT"
+  identity_sources   = ["$request.header.Authorization"]  # Assuming JWT token is in the Authorization header
+  jwt_configuration {
+    issuer             = "https://cognito-idp.${var.AWS_REGION}.amazonaws.com/${aws_cognito_user_pool.user_pool.id}"
+    audience           = [aws_cognito_user_pool_client.client.id]
+  }
+}
+
+resource "aws_apigatewayv2_route" "get_BACKEND-POC" {
+  api_id        = aws_apigatewayv2_api.main.id
+  route_key     = "GET /allpost"
+  target        = "integrations/${aws_apigatewayv2_integration.lambda_BACKEND-POC.id}"
+  
+  authorization_scopes = ["openid"]  # Set the required scopes for authorization
+  authorizer_id        = aws_apigatewayv2_authorizer.cognito_authorizer.id
+}
+
+
+/*
 resource "aws_apigatewayv2_route" "get_BACKEND-POC" {
   api_id = aws_apigatewayv2_api.main.id
 
@@ -84,6 +107,7 @@ resource "aws_apigatewayv2_route" "get_BACKEND-POC" {
   authorization_scopes = ["openid"]  # Set the required scopes for authorization
   authorizer_id = aws_apigatewayv2_authorizer.cognito_authorizer.id
 }
+*/
 
 resource "aws_apigatewayv2_route" "post_BACKEND-POC" {
   api_id = aws_apigatewayv2_api.main.id
