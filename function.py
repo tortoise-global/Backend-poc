@@ -95,7 +95,37 @@ def lambda_handler(event, context):
                 'headers': headers
             }
 
+        
+        if http_method == 'POST' and route == '/addsignup':
+            request_json = json.loads(event['body'])
 
+            data = create_user(request_json["useremail"],request_json["permanentpassword"])
+            body = json.dumps(data)
+
+
+            return {
+                'statusCode': status_code,
+                'body': body,
+                'headers': headers
+            }
+        
+
+        if http_method == 'GET' and route == '/get_token':
+            # request_json = json.loads(event['body'])
+            if 'queryStringParameters' in event and event['queryStringParameters'] and 'username' in event['queryStringParameters'] and 'password' in event['queryStringParameters']:
+
+                username = event['queryStringParameters']['username']
+                password = event['queryStringParameters']['password']
+
+                data = get_token(username,password)
+                body = json.dumps(data)
+
+
+                return {
+                    'statusCode': status_code,
+                    'body': body,
+                    'headers': headers
+                }
 
         # # update post
         # elif http_method == 'PUT' and route == '/post':
@@ -142,6 +172,99 @@ def lambda_handler(event, context):
     #     'headers': headers
     # }
 
+
+def create_user(useremail,permanentpassword):
+
+
+    # Initialize Cognito client
+    client = boto3.client('cognito-idp', region_name='us-east-1')  # Replace 'YOUR_REGION' with your AWS region
+
+    # Define parameters for user creation
+    user_pool_id = 'YOUR_USER_POOL_ID'  # Replace 'YOUR_USER_POOL_ID' with your Cognito User Pool ID
+    user_email = useremail
+    permanent_password = permanentpassword
+
+    # Create the user with email as the username and a permanent password
+    response = client.admin_create_user(
+        UserPoolId=user_pool_id,
+        Username=user_email,  # Use email as the username
+        UserAttributes=[
+            {
+                'Name': 'email',
+                'Value': user_email
+            },
+            # Add other user attributes as needed
+        ],
+        DesiredDeliveryMediums=[
+            'EMAIL',  # or 'SMS' if required
+        ],
+        MessageAction='SUPPRESS',  # Sets the user password without sending a confirmation message
+    )
+
+    # Set the permanent password for the user
+    client.admin_set_user_password(
+        UserPoolId=user_pool_id,
+        Username=user_email,
+        Password=permanent_password,
+        Permanent=True
+    )
+
+    print("User created with email as username and permanent password:", response)
+
+    return response
+    
+
+def get_token(username,password):
+
+    # Initialize the Cognito client
+    client = boto3.client('cognito-idp', region_name='us-east-1')
+
+    # Your user pool ID
+    user_pool_id = 'your_user_pool_id'
+
+    # Your client ID from the App settings in Cognito
+    client_id = 'your_client_id'
+
+    # Username and password for authentication
+    username = username
+    password = password
+
+    # Authenticate the user and retrieve tokens
+    try:
+        response = client.initiate_auth(
+            ClientId=client_id,
+            AuthFlow='USER_PASSWORD_AUTH',
+            AuthParameters={
+                'USERNAME': username,
+                'PASSWORD': password
+            }
+        )
+        # Access and refresh tokens
+        access_token = response['AuthenticationResult']['AccessToken']
+        refresh_token = response['AuthenticationResult']['RefreshToken']
+        id_token = response['AuthenticationResult']['IdToken']
+
+        # Print or use the tokens as needed
+        print("Access Token:", access_token)
+        print("Refresh Token:", refresh_token)
+        print("ID Token:", id_token)
+
+        data = {
+            "Access Token:":access_token,
+            "Refresh Token:":refresh_token,
+            "ID Token:":id_token
+        }
+
+        return data
+
+    except client.exceptions.NotAuthorizedException as e:
+        print("Invalid credentials:", e)
+    except client.exceptions.UserNotFoundException as e:
+        print("User not found:", e)
+    except client.exceptions.UserNotConfirmedException as e:
+        print("User not confirmed:", e)
+    except Exception as e:
+        print("Error:", e)
 
 
 
