@@ -180,7 +180,7 @@ def create_user(useremail,permanentpassword):
     client = boto3.client('cognito-idp', region_name='us-east-1')  # Replace 'YOUR_REGION' with your AWS region
 
     # Define parameters for user creation
-    user_pool_id = 'YOUR_USER_POOL_ID'  # Replace 'YOUR_USER_POOL_ID' with your Cognito User Pool ID
+    user_pool_id = 'us-east-1_EUHla6BwY'  # Replace 'YOUR_USER_POOL_ID' with your Cognito User Pool ID
     user_email = useremail
     permanent_password = permanentpassword
 
@@ -220,10 +220,10 @@ def get_token(username,password):
     client = boto3.client('cognito-idp', region_name='us-east-1')
 
     # Your user pool ID
-    user_pool_id = 'your_user_pool_id'
+    user_pool_id = 'us-east-1_EUHla6BwY'
 
     # Your client ID from the App settings in Cognito
-    client_id = 'your_client_id'
+    client_id = '46aniqlgekeu24ngabc2c682sn'
 
     # Username and password for authentication
     username = username

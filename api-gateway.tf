@@ -34,6 +34,36 @@ resource "aws_cloudwatch_log_group" "main_api_gw" {
   retention_in_days = 14
 }
 
+variable "AWS_REGION" {
+  description = "The AWS region where resources will be deployed"
+  default     = "us-east-1"  # Set your preferred default AWS region here
+}
+
+resource "aws_apigatewayv2_authorizer" "cognito_authorizer" {
+  api_id             = aws_apigatewayv2_api.main.id
+  name               = "cognito-authorizer"
+  authorizer_type    = "JWT"
+  identity_sources   = ["$request.header.Authorization"]
+  jwt_configuration {
+    issuer             = "https://cognito-idp.${var.AWS_REGION}.amazonaws.com/${aws_cognito_user_pool.user_pool.id}"
+    audience           = [aws_cognito_user_pool_client.client.id]
+  }
+}
+
+/*
+resource "aws_apigatewayv2_authorizer" "cognito_authorizer" {
+  api_id             = aws_apigatewayv2_api.main.id
+  name               = "cognito-authorizer"
+  authorizer_type    = "JWT"
+  identity_sources   = ["$request.header.Authorization"]
+  jwt_configuration {
+    issuer             = "https://cognito-idp.<your-region>.amazonaws.com/${aws_cognito_user_pool.user_pool.id}"
+    audience           = [aws_cognito_user_pool_client.client.id]
+  }
+}
+*/
+
+
 
 
 
@@ -50,6 +80,9 @@ resource "aws_apigatewayv2_route" "get_BACKEND-POC" {
 
   route_key = "GET /allpost" // give your own endpoint name in place of allpost
   target    = "integrations/${aws_apigatewayv2_integration.lambda_BACKEND-POC.id}"
+
+  authorization_scopes = ["openid"]  # Set the required scopes for authorization
+  authorizer_id = aws_apigatewayv2_authorizer.cognito_authorizer.id
 }
 
 resource "aws_apigatewayv2_route" "post_BACKEND-POC" {
