@@ -84,6 +84,7 @@ resource "aws_cognito_user_pool_client" "client" {
 
   allowed_oauth_flows_user_pool_client = true
   allowed_oauth_scopes            = ["openid"]
+  callback_urls                   = ["https://turtil.raj/callback"]  # Specify your callback URL(s) here
   explicit_auth_flows             = [
     "ALLOW_REFRESH_TOKEN_AUTH",
     "ALLOW_USER_PASSWORD_AUTH",
