@@ -121,3 +121,24 @@ resource "aws_iam_role_policy_attachment" "dynamodb_policy_attachment" {
   //policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 //}
 
+
+// to create cognito user
+resource "aws_iam_policy" "cognito_admin_create_user_policy" {
+  name        = "CognitoAdminCreateUserPolicy"
+  description = "Policy allowing AdminCreateUser in Cognito User Pool"
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [{
+      Effect    = "Allow",
+      Action    = "cognito-idp:AdminCreateUser",
+      Resource  = "arn:aws:cognito-idp:us-east-1:033464272864:userpool/us-east-1_EUHla6BwY"
+    }]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "cognito_admin_create_user_attachment" {
+  policy_arn = aws_iam_policy.cognito_admin_create_user_policy.arn
+  role       = aws_iam_role.BACKEND-POC_lambda_exec.name
+}
+
