@@ -54,7 +54,7 @@ resource "aws_cognito_user_pool" "user_pool" {
 */
  }
 }
-/* // wrong config details
+/* 
 resource "aws_cognito_user_pool_client" "client" {
   name                            = "cognito-client"
   user_pool_id                    = aws_cognito_user_pool.user_pool.id
@@ -79,7 +79,9 @@ resource "aws_cognito_user_pool_client" "client" {
   generate_secret                 = false
   refresh_token_validity          = 90
   prevent_user_existence_errors   = "ENABLED"
-  allowed_oauth_flows             = ["code", "implicit", "client_credentials"]  # Updated with correct values
+ // allowed_oauth_flows             = ["code", "implicit", "client_credentials"]  # Updated with correct values
+  allowed_oauth_flows             = ["implicit"]  # Updated with correct values
+
   allowed_oauth_flows_user_pool_client = true
   allowed_oauth_scopes            = ["openid"]
   explicit_auth_flows             = [
