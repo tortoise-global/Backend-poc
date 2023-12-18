@@ -142,3 +142,24 @@ resource "aws_iam_role_policy_attachment" "cognito_admin_create_user_attachment"
   role       = aws_iam_role.BACKEND-POC_lambda_exec.name
 }
 
+// to create password
+resource "aws_iam_policy" "cognito_admin_set_password_policy" {
+  name        = "CognitoAdminSetPasswordPolicy"
+  description = "Policy allowing AdminSetUserPassword in Cognito User Pool"
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect    = "Allow",
+        Action    = "cognito-idp:AdminSetUserPassword",
+        Resource  = "arn:aws:cognito-idp:us-east-1:033464272864:userpool/us-east-1_EUHla6BwY"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "cognito_admin_set_password_attachment" {
+  policy_arn = aws_iam_policy.cognito_admin_set_password_policy.arn
+  role       = aws_iam_role.BACKEND-POC_lambda_exec.name
+}
