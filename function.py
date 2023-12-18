@@ -1,6 +1,8 @@
 
 import json
 import boto3
+import jwt
+
 # from cognitojwt import CognitoJWT
 
 
@@ -16,13 +18,13 @@ def lambda_handler(event, context):
         "Content-Type": "application/json"
     }
 
-    # if 'headers' in event:
-    #     headers = event['headers']
-    #     if 'Authorization' in headers:
-    #         access_token = headers['Authorization']
+    if 'headers' in event:
+        headers = event['headers']
+        if 'Authorization' in headers:
+            access_token = headers['Authorization']
 
-    #         print("acesstoken", access_token)
-    #         token = access_token[1]
+            print("acesstoken", access_token)
+            token = access_token[1]
 
     # try:
     if 1:
@@ -58,7 +60,7 @@ def lambda_handler(event, context):
         if http_method == 'GET' and route == '/allpost':
             
             # Process the token
-            # user_info = authenticate_cognito_token(token)
+            user_info = decode_cognito_token(token)
 
             response = table.scan()
             body = response.get('Items')
@@ -288,3 +290,26 @@ def get_token(username,password):
 
 
 
+def decode_cognito_token(token):
+    # Define the Cognito User Pool ID (replace 'YOUR_USER_POOL_ID' with your actual User Pool ID)
+    user_pool_id = 'us-east-1_EUHla6BwY'
+
+    try:
+        # Decoding the token using the cognito user pool's public key
+        decoded_token = jwt.decode(token, options={"verify_signature": False})
+        
+        # Ensure the token was issued by Cognito
+        if decoded_token['iss'] != f'https://cognito-idp.us-east-1.amazonaws.com/{user_pool_id}':
+            raise ValueError("Invalid token issuer")
+        
+        # You can access the token claims in the decoded token
+        print("Decoded Token Claims:")
+        print(decoded_token)
+        return decoded_token
+
+    except jwt.ExpiredSignatureError:
+        print("Token has expired")
+    except jwt.JWTError as e:
+        print(f"JWT Error: {e}")
+    except ValueError as e:
+        print(f"ValueError: {e}")
