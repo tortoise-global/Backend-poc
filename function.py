@@ -1,6 +1,8 @@
 
 import json
 import boto3
+from cognitojwt import CognitoJWT
+
 
 # Create a DynamoDB resource
 dynamodb = boto3.resource('dynamodb')
