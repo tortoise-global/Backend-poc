@@ -100,8 +100,8 @@ def lambda_handler(event, context):
             request_json = json.loads(event['body'])
 
             data = create_user(request_json["useremail"],request_json["permanentpassword"])
-            # body = json.dumps(data)
-            body = data
+            body = json.dumps({data})
+            # body = data
 
 
 
