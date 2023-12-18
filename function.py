@@ -14,6 +14,14 @@ def lambda_handler(event, context):
         "Content-Type": "application/json"
     }
 
+    if 'headers' in event:
+        headers = event['headers']
+        if 'Authorization' in headers:
+            access_token = headers['Authorization']
+
+            print("acesstoken", access_token)
+            token = access_token[1]
+
     # try:
     if 1:
         http_method, route = event['httpMethod'], event['resource']
@@ -46,6 +54,10 @@ def lambda_handler(event, context):
 
         #get all post        
         if http_method == 'GET' and route == '/allpost':
+            
+            # Process the token
+            user_info = authenticate_cognito_token(token)
+
             response = table.scan()
             body = response.get('Items')
             body = json.dumps(body)
@@ -100,6 +112,9 @@ def lambda_handler(event, context):
             request_json = json.loads(event['body'])
 
             data = create_user(request_json["useremail"],request_json["permanentpassword"])
+
+            print("asdfg",data)
+            print(type(data))
             body = json.dumps({data})
             # body = data
 
@@ -268,5 +283,57 @@ def get_token(username,password):
     except Exception as e:
         print("Error:", e)
 
+
+
+
+# def authenticate_cognito_token():
+from cognitojwt import CognitoJWT
+# import requests
+
+def authenticate_cognito_token(token):
+    user_pool_id = 'us-east-1_EUHla6BwY' # Replace with your Cognito User Pool ID
+    region = 'us-east-1'  # Replace with your AWS region
+    # res= requests.get('Authorization')
+    
+    # header_data = requests.headers.get('Authorization')
+    # header_data = header_data.split(" ")
+    # token = header_data[1]
+
+    # Initialize CognitoJWT object
+    cognito_jwt = CognitoJWT(token, user_pool_id, region)
+
+    try:
+        # Verify the token
+        claims = cognito_jwt.verify()
+        
+        # Access claims (user information)
+        # user_id = claims['username']
+        email = claims['email']
+        # Add more claims as needed
+
+        # Token is valid, return user information
+        return {
+            # 'user_id': user_id,
+            'email': email,
+            # Add more user information as needed
+        }
+    except Exception as e:
+        # Token verification failed
+        print(f"Token verification failed: {str(e)}")
+        return None
+
+# # Example usage
+# access_token = 'YOUR_COGNITO_ACCESS_TOKEN'  # Replace with your Cognito access token
+# user_info = authenticate_cognito_token(access_token)
+
+# if user_info:
+#     print("Token is valid.")
+#     print("User ID:", user_info['user_id'])
+#     print("Email:", user_info['email'])
+#     # Access more user information as needed
+# else:
+#     print("Token is invalid.")
+
+#     pass
 
 
