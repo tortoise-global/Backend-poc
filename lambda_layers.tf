@@ -30,7 +30,7 @@ resource "null_resource" "lambda_layer" {
 
 # define existing bucket for storing lambda layers
 resource "aws_s3_bucket" "lambda_layer_bucket" {
-  bucket = "my-lambda-layer-bucket"
+  bucket = "my-lambda-layer-buckets"
 }
 
 # upload zip file to s3
