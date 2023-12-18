@@ -6,7 +6,7 @@ locals {
   requirements_path = "requirements.txt"
 
 }
-/*
+
 # create zip file from requirements.txt. Triggers only when the file is updated
 resource "null_resource" "lambda_layer" {
   triggers = {
@@ -27,8 +27,8 @@ resource "null_resource" "lambda_layer" {
     EOT
   }
 }
-*/
 
+/*
 # Create a Python virtual environment
 resource "null_resource" "lambda_layer" {
   triggers = {
@@ -40,12 +40,14 @@ resource "null_resource" "lambda_layer" {
       set -e
       //python3 -m venv myenv
       //source myenv/bin/activate
+      apt install python3 python3-pip zip -y
       pip3 install -r ${local.requirements_path} -t 
      // deactivate
       zip -r ${local.layer_zip_path}
     EOT
   }
 }
+*/
 
 # define existing bucket for storing lambda layers
 resource "aws_s3_bucket" "lambda_layer_bucket" {
