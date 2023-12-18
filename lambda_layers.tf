@@ -18,12 +18,12 @@ resource "null_resource" "lambda_layer" {
   provisioner "local-exec" {
     command = <<EOT
       set -e
-      sudo apt-get update
-      sudo apt install python3 python3-pip zip -y
-      sudo rm -rf python
-      sudo mkdir python
-      sudo pip3 install -r ${local.requirements_path} -t python/
-      sudo zip -r ${local.layer_zip_path} python/
+      apt-get update
+      apt install python3 python3-pip zip -y
+      rm -rf python
+      mkdir python
+      pip3 install -r ${local.requirements_path} -t python/
+      zip -r ${local.layer_zip_path} python/
     EOT
   }
 }
@@ -38,10 +38,10 @@ resource "null_resource" "lambda_layer" {
   provisioner "local-exec" {
     command = <<EOT
       set -e
-      python3 -m venv myenv
-      source myenv/bin/activate
+      //python3 -m venv myenv
+      //source myenv/bin/activate
       pip3 install -r ${local.requirements_path} -t myenv/lib/python3.11/site-packages/
-      deactivate
+     // deactivate
       zip -r ${local.layer_zip_path} myenv/lib/python3.11/site-packages/
     EOT
   }
