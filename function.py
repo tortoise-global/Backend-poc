@@ -1,7 +1,7 @@
 
 import json
 import boto3
-# import jwt
+import jwt
 
 
 # from cognitojwt import CognitoJWT
