@@ -6,7 +6,7 @@ locals {
   requirements_path = "requirements.txt"
 
 }
-
+/*
 # create zip file from requirements.txt. Triggers only when the file is updated
 resource "null_resource" "lambda_layer" {
   triggers = {
@@ -24,6 +24,25 @@ resource "null_resource" "lambda_layer" {
       sudo mkdir python
       sudo pip3 install -r ${local.requirements_path} -t python/
       sudo zip -r ${local.layer_zip_path} python/
+    EOT
+  }
+}
+*/
+
+# Create a Python virtual environment
+resource "null_resource" "lambda_layer" {
+  triggers = {
+    requirements = filesha1(local.requirements_path)
+  }
+
+  provisioner "local-exec" {
+    command = <<EOT
+      set -e
+      python3 -m venv myenv
+      source myenv/bin/activate
+      pip3 install -r ${local.requirements_path} -t myenv/lib/python3.8/site-packages/
+      deactivate
+      zip -r ${local.layer_zip_path} myenv/lib/python3.8/site-packages/
     EOT
   }
 }
