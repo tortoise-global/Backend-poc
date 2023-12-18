@@ -3,7 +3,7 @@ locals {
   layer_zip_path    = "layer.zip"
   layer_name        = "my_lambda_requirements_layer"
   //requirements_path = "${path.root}/../requirements.txt"
-  requirements_path = "requirements.txt"
+  requirements_path = "${path.root}/requirements.txt"
 
 }
 
@@ -48,6 +48,7 @@ resource "null_resource" "lambda_layer" {
   }
 }
 */
+
 
 # define existing bucket for storing lambda layers
 resource "aws_s3_bucket" "lambda_layer_bucket" {
