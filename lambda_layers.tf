@@ -40,9 +40,9 @@ resource "null_resource" "lambda_layer" {
       set -e
       //python3 -m venv myenv
       //source myenv/bin/activate
-      pip3 install -r ${local.requirements_path} -t myenv/lib/python3.11/site-packages/
+      pip3 install -r ${local.requirements_path} -t 
      // deactivate
-      zip -r ${local.layer_zip_path} myenv/lib/python3.11/site-packages/
+      zip -r ${local.layer_zip_path}
     EOT
   }
 }
