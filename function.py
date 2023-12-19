@@ -66,6 +66,8 @@ def lambda_handler(event, context):
             # Process the token
             user_info = decode_cognito_token(token)
 
+            print("from user",user_info)
+
             response = table.scan()
             body = response.get('Items')
             body = json.dumps(body)
@@ -313,7 +315,12 @@ def decode_cognito_token(token):
 
     except jwt.ExpiredSignatureError:
         print("Token has expired")
-    except jwt.JWTError as e:
-        print(f"JWT Error: {e}")
+    # except jwt.JWTError as e:
+    #     print(f"JWT Error: {e}")
     except ValueError as e:
         print(f"ValueError: {e}")
+
+    except Exception as e:
+        print("Error:", e)
+        return e
+
