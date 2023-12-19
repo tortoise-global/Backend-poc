@@ -15,6 +15,7 @@ table = dynamodb.Table(table_name)
 
 def lambda_handler(event, context):
     body = None
+    token = None
     status_code = 200
     headers = {
         "Content-Type": "application/json"
@@ -25,8 +26,9 @@ def lambda_handler(event, context):
         if 'Authorization' in headers:
             access_token = headers['Authorization']
 
-            print("acesstoken", access_token)
+            print("acesstokensdfg", access_token)
             token = access_token[1]
+            print("mytoken",token)
 
     # try:
     if 1:
