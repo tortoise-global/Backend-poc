@@ -56,6 +56,9 @@ resource "aws_lambda_function" "BACKEND-POC" {
   source_code_hash = data.archive_file.lambda_BACKEND-POC.output_base64sha256
 
   role = aws_iam_role.BACKEND-POC_lambda_exec.arn
+
+  # Attach Lambda Layer
+  layers = [aws_lambda_layer_version.my_lambda_layer.arn]
 }
 
 resource "aws_cloudwatch_log_group" "BACKEND-POC" {

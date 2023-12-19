@@ -76,4 +76,50 @@ resource "null_resource" "lambda_layers" {
     EOT
   }
 }
+
+
+
+
+
+# Create Lambda Layer
+resource "aws_lambda_layer_version" "my_lambda_layer" {
+  filename   = "python.zip"  # Replace with the path to your ZIP file
+  layer_name = "my_lambda_layer"
+  
+  compatible_runtimes = ["python3.11"]  # Replace with your desired Python version
+}
+
+output "layer_arn" {
+  value = aws_lambda_layer_version.my_lambda_layer.arn
+}
+
+
+
+# Attach Lambda Layer to Lambda function
+resource "aws_lambda_function" "BACKEND-POC" {
+  function_name         = "BACKEND-POC"
+  s3_bucket             = aws_s3_bucket.lambda_bucket.id
+  s3_key                = aws_s3_object.lambda_BACKEND-POC.key
+  runtime               = "python3.11"
+  handler               = "function.lambda_handler"
+  source_code_hash      = data.archive_file.lambda_BACKEND-POC.output_base64sha256
+  role                  = aws_iam_role.BACKEND-POC_lambda_exec.arn
+
+  # Attach Lambda Layer
+  layers = [aws_lambda_layer_version.my_lambda_layer.arn]
+}
+
 */
+
+# Create Lambda Layer
+resource "aws_lambda_layer_version" "my_lambda_layer" {
+  filename             = "python.zip"  # Replace with the path to your ZIP file
+  layer_name           = "my_lambda_layer"
+  compatible_runtimes  = ["python3.11"]  # Replace with your desired Python version
+}
+
+
+//output "layer_arn" {
+  //value = aws_lambda_layer_version.my_lambda_layer.arn
+//}
+
