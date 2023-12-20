@@ -58,7 +58,7 @@ resource "aws_lambda_function" "BACKEND-POC" {
   role = aws_iam_role.BACKEND-POC_lambda_exec.arn
 
   # Attach Lambda Layer
-  ayers = [aws_lambda_layer_version.my_lambda_layer.arn]
+  layers = [aws_lambda_layer_version.my_lambda_layer.arn]
 }
 
 resource "aws_cloudwatch_log_group" "BACKEND-POC" {
