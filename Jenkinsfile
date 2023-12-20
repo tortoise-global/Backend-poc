@@ -19,17 +19,17 @@ pipeline {
         stage("Install Python dependencies and create zip") {
             steps {
                 withCredentials([string(credentialsId: 'SUDO_PASSWORD', variable: 'SUDO_PASS')]) {
-                script {
-                    def sudoPassword = env.SUDO_PASS
+                    script {
+                        def sudoPassword = env.SUDO_PASS
 
-                    sh "echo ${sudoPassword} | sudo -S apt-get update"
-                    sh "echo ${sudoPassword} | sudo -S apt-get install -y python3 python3-pip zip"
-                    sh "echo ${sudoPassword} | sudo -S rm -rf python"
-                    sh "echo ${sudoPassword} | sudo -S mkdir python"
-                    sh "echo ${sudoPassword} | sudo -S pip3 install -r requirements.txt -t python/"
-                    sh "echo ${sudoPassword} | sudo -S zip -r python.zip python/"
-                
-
+                        sh "echo ${sudoPassword} | sudo -S apt-get update"
+                        sh "echo ${sudoPassword} | sudo -S apt-get install -y python3 python3-pip zip"
+                        sh "echo ${sudoPassword} | sudo -S rm -rf python"
+                        sh "echo ${sudoPassword} | sudo -S mkdir python"
+                        sh "echo ${sudoPassword} | sudo -S pip3 install -r requirements.txt -t python/"
+                        sh "echo ${sudoPassword} | sudo -S zip -r python.zip python/"
+                    
+                    }
                 //     def sudoPassword = credentials('SUDO_PASSWORD')
                 //     if (sudoPassword) {
                 //         def command = "echo ${sudoPassword} | sudo -S apt-get update"
