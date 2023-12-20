@@ -28,9 +28,11 @@ pipeline {
 
                         // echo "SUDO_PASS: ${SUDO_PASS}"
                         // sh "echo ${sudo_pass} | sudo -S whoami"
-                        def hardcodedPassword = "iconsoftware@8421"
-                            echo "SUDO_PASS: ${hardcodedPassword}"
-                            sh "echo ${hardcodedPassword} | sudo -S whoami"
+                        // def hardcodedPassword = "iconsoftware@8421"
+                        //     echo "SUDO_PASS: ${hardcodedPassword}"
+                        //     sh "echo ${hardcodedPassword} | sudo -S whoami"
+
+                            sh "whoami"
 
 
                         // sh  '''
