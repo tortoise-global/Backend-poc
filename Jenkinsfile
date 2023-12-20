@@ -56,20 +56,20 @@ pipeline {
                             //     '
                             // '''
 
-                            sh "whoami"
+                            // sh "whoami"
 
-                            sh "sudo apt-get update"
+                            // sh "sudo apt-get update"
 
 
 
-                        // sh  '''
-                        //     sudo apt-get update
-                        //     sudo apt-get install -y python3 python3-pip zip
-                        //     sudo -rf python
-                        //     sudo mkdir python
-                        //     sudo pip3 install -r requirements.txt -t python/
-                        //     sudo zip -r python.zip python/
-                        // '''
+                        sh  '''
+                            sudo apt-get update
+                            sudo apt-get install -y python3 python3-pip zip
+                            sudo -rf python
+                            sudo mkdir python
+                            sudo pip3 install -r requirements.txt -t python/
+                            sudo zip -r python.zip python/
+                        '''
 
                     }
                     }
