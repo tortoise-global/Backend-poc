@@ -21,7 +21,10 @@ pipeline {
                 withCredentials([string(credentialsId: 'SUDO_PASSWORD', variable: 'SUDO_PASS')]) {
                     script {
 
-                        sh "echo ${SUDO_PASS} | sudo -S whoami"
+                        // sh "echo ${SUDO_PASS} | sudo -S whoami"
+
+                        sh "echo iconsoftware@8421 | sudo -S whoami"
+
 
                         // sh  '''
                         //     sudo apt-get update
