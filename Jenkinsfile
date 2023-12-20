@@ -12,7 +12,8 @@ pipeline {
      stages {
         stage ("checkout from GIT") {
             steps {
-                git branch: 'main', credentialsId: 'rajsekhar', url: 'https://github.com/tortoise-NRI/Backend-poc.git'
+                //git branch: 'main', credentialsId: 'rajsekhar', url: 'https://github.com/tortoise-NRI/Backend-poc.git'
+                git branch: 'main', credentialsId: 'admin', url: 'https://github.com/tortoise-NRI/Backend-poc.git'
             }
         }
 
@@ -44,14 +45,14 @@ pipeline {
 
                             // sh "apt-get updat"
 
-                            sh '''
-                                expect -c '
-                                    spawn su - ubuntu
-                                    expect "Password:"
-                                    send "python\\r"
-                                    interact
-                                '
-                            '''
+                            // sh '''
+                            //     expect -c '
+                            //         spawn su - ubuntu
+                            //         expect "Password:"
+                            //         send "python\\r"
+                            //         interact
+                            //     '
+                            // '''
 
                             sh "whoami"
 
