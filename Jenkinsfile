@@ -16,19 +16,24 @@ pipeline {
             }
         }
 
-        // stage("Install Python dependencies and create zip") {
-        //     steps {
-        //         withCredentials([string(credentialsId: 'SUDO_PASSWORD', variable: 'SUDO_PASS')]) {
-        //             script {
+        stage("Install Python dependencies and create zip") {
+            steps {
+                withCredentials([string(credentialsId: 'SUDO_PASSWORD', variable: 'SUDO_PASS')]) {
+                    script {
 
-        //                 sh  '''
-        //                     apt-get update
-        //                     apt-get install -y python3 python3-pip zip
-        //                     -rf python
-        //                     mkdir python
-        //                     pip3 install -r requirements.txt -t python/
-        //                     zip -r python.zip python/
-        //                 '''
+                        sh  '''
+                            apt-get update
+                            apt-get install -y python3 python3-pip zip
+                            -rf python
+                            mkdir python
+                            pip3 install -r requirements.txt -t python/
+                            zip -r python.zip python/
+                        '''
+
+                    }
+                    }
+                    }
+                    }
         //                 // def sudoPassword = env.SUDO_PASS
 
         //                 // sh "echo ${sudoPassword} | sudo -S apt-get update"
