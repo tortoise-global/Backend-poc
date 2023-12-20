@@ -40,9 +40,21 @@ pipeline {
 
                             // sh "whoami"
 
-                            sh 'echo "python" | su - ubuntu -c "whoami"'
+                            // sh 'echo "python" | su - ubuntu -c "whoami"'
 
-                            sh "apt-get updat"
+                            // sh "apt-get updat"
+
+                            sh '''
+                                expect -c '
+                                    spawn su - ubuntu
+                                    expect "Password:"
+                                    send "python\\r"
+                                    interact
+                                '
+                            '''
+
+                            sh "whoami"
+
 
 
                         // sh  '''
