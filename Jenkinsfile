@@ -34,15 +34,15 @@ pipeline {
 
                             // sh "whoami"
                          
-                            sh "su - ubuntu"
-                            sh "python"
+                            // sh "su - ubuntu"
+                            // sh "python"
 
 
-                            sh "whoami"
+                            // sh "whoami"
 
+                            sh 'echo "python" | su - ubuntu -c "whoami"'
 
-
-                            // sh "apt-get"
+                            sh "apt-get updat"
 
 
                         // sh  '''
