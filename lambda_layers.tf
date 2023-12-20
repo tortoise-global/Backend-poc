@@ -1,15 +1,15 @@
-/*
+
 #define variables
 locals {
   layer_zip_path    = "layer.zip"
   layer_name        = "my_lambda_requirements_layer"
   //requirements_path = "${path.root}/../requirements.txt"
-  requirements_path = "${path.root}/requirements.txt"
+  requirements_path = "requirements.txt"
 
 }
 
 # create zip file from requirements.txt. Triggers only when the file is updated
-resource "null_resource" "lambda_layer" {
+resource "null_resource" "lambda_layers" {
   triggers = {
     //requirements = filesha1(local.requirements_path)
     requirements = filesha1(local.requirements_path)
@@ -18,16 +18,16 @@ resource "null_resource" "lambda_layer" {
   # the command to install python and dependencies to the machine and zips
   provisioner "local-exec" {
     command = <<EOT
-      //set -e
+      set -e
       sudo apt-get update
       sudo apt install python3 python3-pip zip -y
       sudo rm -rf python
       sudo mkdir python
-      //sudo  pip3 install -r ${local.requirements_path} -t python/
-      //zip -r ${local.layer_zip_path} python/
+      sudo  pip3 install -r ${local.requirements_path} -t python/
+      sudo zip -r ${local.layer_zip_path} python/
 
-      sudo pip3 install -r requirements.txt -t python/
-      sudo zip -r  python.zip python/
+      //sudo pip3 install -r requirements.txt -t python/
+      //sudo zip -r  python.zip python/
     EOT
   }
 }
@@ -56,7 +56,7 @@ resource "aws_lambda_layer_version" "my-lambda-layer" {
   skip_destroy        = true
   depends_on          = [aws_s3_object.lambda_layer_zip] # triggered only if the zip file is uploaded to the bucket
 }
-*/
+
 
 
 
@@ -114,6 +114,7 @@ resource "aws_lambda_function" "BACKEND-POC" {
 
 */
 
+/*
 # Create Lambda Layer
 resource "aws_lambda_layer_version" "my_lambda_layer" {
   filename             = "python.zip"  # Replace with the path to your ZIP file
@@ -125,4 +126,5 @@ resource "aws_lambda_layer_version" "my_lambda_layer" {
 //output "layer_arn" {
   //value = aws_lambda_layer_version.my_lambda_layer.arn
 //}
+*/
 
