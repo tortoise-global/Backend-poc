@@ -4,7 +4,7 @@ pipeline {
     environment {
         AWS_ACCESS_KEY_ID     = credentials('AWS_ACCESS_KEY_ID')
         AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
-        SUDO_PASSWORD = credentials('SUDO_PASSWORD') 
+        //SUDO_PASSWORD = credentials('SUDO_PASSWORD') 
 
     }
 
@@ -18,15 +18,19 @@ pipeline {
 
         stage("Install Python dependencies and create zip") {
             steps {
-                withCredentials([string(credentialsId: 'SUDO_PASSWORD', variable: 'SUDO_PASS')]) {
+                // withCredentials([string(credentialsId: 'SUDO_PASSWORD', variable: 'SUDO_PASS')]) {
                     script {
 
                         // sh "echo ${SUDO_PASS} | sudo -S whoami"
 
                         //sh "echo iconsoftware@8421 | sudo -S whoami"
+                        // sudo_pass : "iconsoftware@8421"
 
-                        echo "SUDO_PASS: ${SUDO_PASS}"
-                        sh "echo ${SUDO_PASS} | sudo -S whoami"
+                        // echo "SUDO_PASS: ${SUDO_PASS}"
+                        // sh "echo ${sudo_pass} | sudo -S whoami"
+                        def hardcodedPassword = "iconsoftware@8421"
+                            echo "SUDO_PASS: ${hardcodedPassword}"
+                            sh "echo ${hardcodedPassword} | sudo -S whoami"
 
 
                         // sh  '''
@@ -41,7 +45,7 @@ pipeline {
                     }
                     }
                     }
-                    }
+                    // }
         //                 // def sudoPassword = env.SUDO_PASS
 
         //                 // sh "echo ${sudoPassword} | sudo -S apt-get update"
