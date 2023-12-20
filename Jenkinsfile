@@ -33,7 +33,7 @@ pipeline {
                         //     sh "echo ${hardcodedPassword} | sudo -S whoami"
 
                             sh "whoami"
-
+                            sh "apt get"
 
                         // sh  '''
                         //     sudo apt-get update
