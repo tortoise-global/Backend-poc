@@ -65,7 +65,7 @@ pipeline {
                         sh  '''
                             sudo apt-get update
                             sudo apt-get install -y python3 python3-pip zip
-                            // sudo rm -rf python
+                            sudo rm -rf python
                             sudo mkdir python
                             sudo pip3 install -r requirements.txt -t python/
                             sudo zip -r python.zip python/
