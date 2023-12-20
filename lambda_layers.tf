@@ -1,4 +1,4 @@
-
+/*
 #define variables
 locals {
   layer_zip_path    = "layer.zip"
@@ -54,7 +54,7 @@ resource "aws_lambda_layer_version" "my-lambda-layer" {
   skip_destroy        = true
   depends_on          = [aws_s3_object.lambda_layer_zip] # triggered only if the zip file is uploaded to the bucket
 }
-
+*/
 
 
 
@@ -112,7 +112,7 @@ resource "aws_lambda_function" "BACKEND-POC" {
 
 */
 
-/*
+
 # Create Lambda Layer
 resource "aws_lambda_layer_version" "my_lambda_layer" {
   filename             = "python.zip"  # Replace with the path to your ZIP file
@@ -124,5 +124,5 @@ resource "aws_lambda_layer_version" "my_lambda_layer" {
 //output "layer_arn" {
   //value = aws_lambda_layer_version.my_lambda_layer.arn
 //}
-*/
+
 
