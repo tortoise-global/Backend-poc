@@ -74,9 +74,8 @@ pipeline {
                         
                     }
                    else {
-                    echo "No sudo password provided"
-                
-        
+                    echo "No sudo password provided" 
+                    }
 
 
                     // sh '''
