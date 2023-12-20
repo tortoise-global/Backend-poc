@@ -25,14 +25,12 @@ resource "null_resource" "lambda_layers" {
       mkdir python
       pip3 install -r ${local.requirements_path} -t python/
       zip -r ${local.layer_zip_path} python/
-
-      //sudo pip3 install -r requirements.txt -t python/
-      //sudo zip -r  python.zip python/
     EOT
   }
 }
 
-
+//sudo pip3 install -r requirements.txt -t python/
+//sudo zip -r  python.zip python/
 
 # define existing bucket for storing lambda layers
 resource "aws_s3_bucket" "lambda_layer_bucket" {
