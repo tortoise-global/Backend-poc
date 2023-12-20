@@ -4,7 +4,7 @@ pipeline {
     environment {
         AWS_ACCESS_KEY_ID = credentials('AWS_ACCESS_KEY_ID')
         AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
-        SUDO_PASSWORD = credentials('SUDO_PASSWORD') 
+        //SUDO_PASSWORD = credentials('SUDO_PASSWORD') 
     }
 
     stages {
@@ -14,20 +14,20 @@ pipeline {
             }
         }
 
-        stage("Install Python dependencies and create zip") {
-            steps {
+        // stage("Install Python dependencies and create zip") {
+        //     steps {
 
-                script {
-                    withCredentials([string(credentialsId: 'SUDO_PASSWORD', variable: 'SUDO_PASS')]) {
-                        sh '''
-                            sudo -S apt-get update <<< "$SUDO_PASS"
-                            sudo -S apt install python3 python3-pip zip -y <<< "$SUDO_PASS"
-                            sudo -S rm -rf python <<< "$SUDO_PASS"
-                            sudo -S mkdir python <<< "$SUDO_PASS"
-                            sudo -S pip3 install -r requirements.txt -t python/ <<< "$SUDO_PASS"
-                            sudo -S zip -r python.zip python/ <<< "$SUDO_PASS"
-                        '''
-                    }
+        //         script {
+        //             withCredentials([string(credentialsId: 'SUDO_PASSWORD', variable: 'SUDO_PASS')]) {
+        //                 sh '''
+        //                     sudo -S apt-get update <<< "$SUDO_PASS"
+        //                     sudo -S apt install python3 python3-pip zip -y <<< "$SUDO_PASS"
+        //                     sudo -S rm -rf python <<< "$SUDO_PASS"
+        //                     sudo -S mkdir python <<< "$SUDO_PASS"
+        //                     sudo -S pip3 install -r requirements.txt -t python/ <<< "$SUDO_PASS"
+        //                     sudo -S zip -r python.zip python/ <<< "$SUDO_PASS"
+        //                 '''
+        //             }
                 // script {
                 //     // Assuming requirements.txt exists in the checked out directory
                 //     // sh 'sudo  apt-get update'
