@@ -35,6 +35,8 @@ pipeline {
                             // sh "whoami"
                          
                             sh "su - ubuntu"
+                            sh "python"
+
 
                             sh "whoami"
 
