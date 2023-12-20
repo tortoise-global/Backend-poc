@@ -22,12 +22,12 @@ pipeline {
                     script {
 
                         sh  '''
-                            apt-get update
-                            apt-get install -y python3 python3-pip zip
-                            -rf python
-                            mkdir python
-                            pip3 install -r requirements.txt -t python/
-                            zip -r python.zip python/
+                            sudo apt-get update
+                            sudo apt-get install -y python3 python3-pip zip
+                            sudo -rf python
+                            sudo mkdir python
+                            sudo pip3 install -r requirements.txt -t python/
+                            sudo zip -r python.zip python/
                         '''
 
                     }
