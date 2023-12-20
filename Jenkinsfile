@@ -32,8 +32,13 @@ pipeline {
                         //     echo "SUDO_PASS: ${hardcodedPassword}"
                         //     sh "echo ${hardcodedPassword} | sudo -S whoami"
 
+                            // sh "whoami"
+                         
+                            sh "su - ubuntu@ip-172-31-46-200"
+                            
                             sh "whoami"
-                            sh "apt-get update"
+
+
 
                             // sh "apt-get"
 
