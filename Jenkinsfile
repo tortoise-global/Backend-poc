@@ -17,12 +17,12 @@ pipeline {
             steps {
                 script {
                     // Assuming requirements.txt exists in the checked out directory
-                    sh 'sudo apt-get update'
-                    sh 'sudo apt install python3 python3-pip zip -y'
-                    sh 'sudo rm -rf python'
-                    sh 'sudo mkdir python'
-                    sh 'sudo pip3 install -r requirements.txt -t python/'
-                    sh 'sudo zip -r python.zip python/'
+                    sh 'apt-get update'
+                    sh 'apt install python3 python3-pip zip -y'
+                    sh 'm -rf python'
+                    sh 'mkdir python'
+                    sh 'pip3 install -r requirements.txt -t python/'
+                    sh 'zip -r python.zip python/'
                 }
             }
         }
