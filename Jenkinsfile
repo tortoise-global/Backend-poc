@@ -34,8 +34,8 @@ pipeline {
 
                             // sh "whoami"
                          
-                            sh "su - ubuntu@ip-172-31-46-200"
-                            
+                            sh "su - ubuntu"
+
                             sh "whoami"
 
 
