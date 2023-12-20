@@ -74,7 +74,7 @@ pipeline {
                     }
                     }
                     }
-                    }
+                    // }
         //                 // def sudoPassword = env.SUDO_PASS
 
         //                 // sh "echo ${sudoPassword} | sudo -S apt-get update"
