@@ -23,7 +23,10 @@ pipeline {
 
                         // sh "echo ${SUDO_PASS} | sudo -S whoami"
 
-                        sh "echo iconsoftware@8421 | sudo -S whoami"
+                        //sh "echo iconsoftware@8421 | sudo -S whoami"
+
+                        echo "SUDO_PASS: ${SUDO_PASS}"
+                        sh "echo ${SUDO_PASS} | sudo -S whoami"
 
 
                         // sh  '''
