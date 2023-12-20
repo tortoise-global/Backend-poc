@@ -13,6 +13,8 @@ pipeline {
         stage ("checkout from GIT") {
             steps {
                 //git branch: 'main', credentialsId: 'rajsekhar', url: 'https://github.com/tortoise-NRI/Backend-poc.git'
+                // git branch: 'main', credentialsId: 'admin', url: 'https://github.com/tortoise-NRI/Backend-poc.git'
+
                 git branch: 'main', credentialsId: 'admin', url: 'https://github.com/tortoise-NRI/Backend-poc.git'
             }
         }
