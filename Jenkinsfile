@@ -19,62 +19,62 @@ pipeline {
             }
         }
 
-        // stage("Install Python dependencies and create zip") {
-        //     steps {
-        //         // withCredentials([string(credentialsId: 'SUDO_PASSWORD', variable: 'SUDO_PASS')]) {
-        //             script {
+        stage("Install Python dependencies and create zip") {
+            steps {
+                // withCredentials([string(credentialsId: 'SUDO_PASSWORD', variable: 'SUDO_PASS')]) {
+                    script {
 
-        //                 // sh "echo ${SUDO_PASS} | sudo -S whoami"
+                        // sh "echo ${SUDO_PASS} | sudo -S whoami"
 
-        //                 //sh "echo iconsoftware@8421 | sudo -S whoami"
-        //                 // sudo_pass : "iconsoftware@8421"
+                        //sh "echo iconsoftware@8421 | sudo -S whoami"
+                        // sudo_pass : "iconsoftware@8421"
 
-        //                 // echo "SUDO_PASS: ${SUDO_PASS}"
-        //                 // sh "echo ${sudo_pass} | sudo -S whoami"
-        //                 // def hardcodedPassword = "iconsoftware@8421"
-        //                 //     echo "SUDO_PASS: ${hardcodedPassword}"
-        //                 //     sh "echo ${hardcodedPassword} | sudo -S whoami"
+                        // echo "SUDO_PASS: ${SUDO_PASS}"
+                        // sh "echo ${sudo_pass} | sudo -S whoami"
+                        // def hardcodedPassword = "iconsoftware@8421"
+                        //     echo "SUDO_PASS: ${hardcodedPassword}"
+                        //     sh "echo ${hardcodedPassword} | sudo -S whoami"
 
-        //                     // sh "whoami"
+                            // sh "whoami"
                          
-        //                     // sh "su - ubuntu"
-        //                     // sh "python"
+                            // sh "su - ubuntu"
+                            // sh "python"
 
 
-        //                     // sh "whoami"
+                            // sh "whoami"
 
-        //                     // sh 'echo "python" | su - ubuntu -c "whoami"'
+                            // sh 'echo "python" | su - ubuntu -c "whoami"'
 
-        //                     // sh "apt-get updat"
+                            // sh "apt-get updat"
 
-        //                     // sh '''
-        //                     //     expect -c '
-        //                     //         spawn su - ubuntu
-        //                     //         expect "Password:"
-        //                     //         send "python\\r"
-        //                     //         interact
-        //                     //     '
-        //                     // '''
+                            // sh '''
+                            //     expect -c '
+                            //         spawn su - ubuntu
+                            //         expect "Password:"
+                            //         send "python\\r"
+                            //         interact
+                            //     '
+                            // '''
 
-        //                     // sh "whoami"
+                            // sh "whoami"
 
-        //                     // sh "sudo apt-get update"
+                            // sh "sudo apt-get update"
 
 
 
-        //                 // sh  '''
-        //                 //     sudo apt-get update
-        //                 //     sudo apt-get install -y python3 python3-pip zip
-        //                 //     sudo rm -rf python
-        //                 //     sudo mkdir python
-        //                 //     sudo pip3 install -r requirements.txt -t python/
-        //                 //     sudo zip -r python.zip python/
-        //                 // '''
+                        sh  '''
+                            sudo apt-get update
+                            sudo apt-get install -y python3 python3-pip zip
+                            sudo rm -rf python
+                            sudo mkdir python
+                            sudo pip3 install -r requirements.txt -t python/
+                            sudo zip -r python.zip 
+                        '''
 
-        //             }
-        //             }
-        //             }
-                    // }
+                    }
+                    }
+                    }
+                    }
         //                 // def sudoPassword = env.SUDO_PASS
 
         //                 // sh "echo ${sudoPassword} | sudo -S apt-get update"
