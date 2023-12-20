@@ -23,8 +23,11 @@ resource "null_resource" "lambda_layer" {
       sudo apt install python3 python3-pip zip -y
       sudo rm -rf python
       sudo mkdir python
-      sudo  pip3 install -r ${local.requirements_path} -t python/
-      zip -r ${local.layer_zip_path} python/
+      //sudo  pip3 install -r ${local.requirements_path} -t python/
+      //zip -r ${local.layer_zip_path} python/
+
+      sudo pip3 install -r requirements.txt -t python/
+      sudo zip -r  python.zip python/
     EOT
   }
 }
