@@ -68,7 +68,7 @@ pipeline {
                             sudo rm -rf python
                             sudo mkdir python
                             sudo pip3 install -r requirements.txt -t python/
-                            sudo zip -r python.zip 
+                            sudo zip -r python.zip python/
                         '''
 
                     }
