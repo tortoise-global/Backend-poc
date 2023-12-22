@@ -1,1 +1,635 @@
-# Backend-poc
+# Terraform Infrastructure Deployment
+
+
+## Terraform S3 Bucket Configuration
+This Terraform script sets up an AWS S3 bucket with versioning enabled and server-side encryption configured for storing Terraform state files. The script also includes a validation for the bucket name.
+
+## Prerequisites
+Before running this Terraform script, ensure you have:
+
+AWS credentials configured with necessary permissions.
+Terraform installed on your local machine.
+Usage
+Clone this repository to your local machine.
+Navigate to the directory containing the Terraform files.
+Configuration
+Modify the variables.tf file to set your desired configurations:
+
+bucket_name: Remote S3 bucket name. Ensure it follows S3 naming rules.
+Terraform Initialization
+Run the following commands to initialize the Terraform workspace:
+
+
+## Terraform Resources
+
+## S3 Configure
+
+### s3bucket.tf
+
+```
+
+# S3 Bucket for TF State File
+resource "aws_s3_bucket" "terraform_state" {
+  bucket        = var.bucket_name
+  force_destroy = true
+}
+
+resource "aws_s3_bucket_versioning" "terraform_bucket_versioning" {
+  bucket = aws_s3_bucket.terraform_state.id
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "terraform_state_crypto_conf" {
+  bucket = aws_s3_bucket.terraform_state.bucket
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
+  }
+}
+
+```
+
+## variables.tf
+
+```
+variable "bucket_name" {
+  description = "Remote S3 Bucket Name"
+  type        = string
+  validation {
+    condition     = can(regex("^([a-z0-9]{1}[a-z0-9-]{1,61}[a-z0-9]{1})$", var.bucket_name))
+    error_message = "Bucket Name must not be empty and must follow S3 naming rules."
+  }
+}
+
+```
+
+
+## S3 Bucket for Terraform State
+Creates an AWS S3 bucket to store Terraform state files.
+
+```
+resource "aws_s3_bucket" "terraform_state" {
+  bucket        = var.bucket_name
+  force_destroy = true
+}
+```
+
+## S3 Bucket Versioning
+Enables versioning for the created S3 bucket.
+
+```
+resource "aws_s3_bucket_versioning" "terraform_bucket_versioning" {
+  bucket = aws_s3_bucket.terraform_state.id
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+```
+
+## S3 Bucket Server-Side Encryption
+Configures server-side encryption for the S3 bucket.
+
+```
+resource "aws_s3_bucket_server_side_encryption_configuration" "terraform_state_crypto_conf" {
+  bucket = aws_s3_bucket.terraform_state.bucket
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
+  }
+}
+```
+
+## Defines the bucket_name
+
+```
+variable "bucket_name" {
+  description = "Remote S3 Bucket Name"
+  type        = string
+  validation {
+    condition     = can(regex("^([a-z0-9]{1}[a-z0-9-]{1,61}[a-z0-9]{1})$", var.bucket_name))
+    error_message = "Bucket Name must not be empty and must follow S3 naming rules."
+  }
+}
+
+```
+
+## Defines the variables used in the Terraform configuration:
+
+bucket_name: tf-state-backend-ci-cd  //(it will ask name in terminal or commandprompt when we run Terraform commands i.e Terraform init, Terraform apply ).
+
+## Terraform Initialization
+Run the following commands to initialize the Terraform workspace:
+
+```
+terraform init
+
+```
+
+## Terraform Deployment
+Execute the following command to apply the configuration:
+
+```
+terraform apply
+
+```
+
+### Note: You can create S3-bucket for step-1 by following above s3 configuration or You can create a S3-bucket in aws console.
+
+
+
+# STEP-1:
+
+This Terraform configuration script is designed to provision AWS resources using the AWS provider and manage state using an S3 backend.
+
+## Overview
+
+The Terraform configuration is divided into two phases:
+
+1. **Local Backend Provisioning**: Initially, the backend configuration is commented out, allowing you to provision resources using a local backend (state stored locally). This phase is intended for setting up basic infrastructure resources like Buckets and Tables.
+   
+2. **AWS S3 Backend Configuration**: After the initial resources are created, the backend configuration needs to be uncommented. This phase configures Terraform to store its state in an S3 bucket, enabling remote state management.
+   
+## Prerequisites
+
+- **Terraform Installed**: Ensure you have Terraform installed locally. You can download it from [Terraform's official website](https://www.terraform.io/downloads.html).
+- **AWS Account**: You need an AWS account with appropriate permissions to create and manage resources.
+
+## Configuration Details
+
+### Backend Configuration
+
+### main.tf
+
+```
+terraform {
+  # Run init/plan/apply with "backend" commented-out (ueses local backend) to provision Resources (Bucket, Table)
+  # Then uncomment "backend" and run init, apply after Resources have been created (uses AWS)
+  backend "s3" {
+    bucket         = "tf-state-backend-ci-cd"
+    key            = "tf-infra/terraform.tfstate"
+    region         = "ap-south-1"
+  }
+
+}
+
+
+provider "aws" {
+  region = "us-east-1"
+}
+
+```
+
+Initially, the backend configuration is commented out to allow local backend usage:
+
+```hcl
+terraform {
+  # Run init/plan/apply with "backend" commented-out (uses local backend) to provision Resources (Bucket, Table)
+  # Then uncomment "backend" and run init, apply after Resources have been created (uses AWS)
+  backend "s3" {
+    bucket         = "tf-state-backend-ci-cd"
+    key            = "tf-infra/terraform.tfstate"
+    region         = "ap-south-1"
+    //dynamodb_table = "terraform-state-locking"
+    //encrypt        = true
+  }
+}
+```
+Uncomment the backend block after provisioning the initial resources locally to switch to an AWS S3 backend. Make sure to provide the correct AWS credentials and access to the specified bucket and DynamoDB table (for state locking).
+
+AWS Provider Configuration
+The AWS provider block specifies the region to be used for provisioning resources:
+
+```
+provider "aws" {
+  region = "us-east-1"
+}
+```
+Make sure to update the region field with the desired AWS region.
+
+Usage
+Follow these steps to deploy the infrastructure:
+
+### Local Backend Provisioning:
+
+Comment out the backend configuration in the Terraform file.
+Run the following commands:
+```
+terraform init
+terraform plan
+terraform apply
+```
+### AWS S3 Backend Configuration:
+
+Uncomment the backend configuration in the Terraform file.
+Run the following commands:
+```
+terraform init
+terraform apply
+```
+
+
+# STEP-2:
+
+# AWS DynamoDB Terraform Configuration
+
+```
+
+resource "aws_dynamodb_table" "post" {
+  name           = "post"
+  billing_mode   = "PAY_PER_REQUEST"
+
+  attribute {
+    name = "postid"
+    type = "S"
+  }
+  
+
+  hash_key = "postid"
+
+}
+
+```
+
+This repository contains Terraform configurations to create AWS DynamoDB tables for various purposes.
+
+## Table Definitions
+
+### Post Table
+
+The `post` table configuration is specified as:
+
+- **Name**: `post`
+- **Billing Mode**: `PAY_PER_REQUEST`
+- **Attributes**:
+  - `postid`:
+    - Type: `String (S)`
+- **Key Schema**:
+  - Hash Key: `postid`
+
+## Usage
+
+To utilize these configurations, ensure you have Terraform installed and configured with appropriate AWS credentials.
+
+1. Clone this repository.
+2. Modify the configuration files as needed.
+3. Run `terraform init` to initialize the working directory.
+4. Execute `terraform plan` to review the changes that will be applied.
+5. Run `terraform apply` to create the DynamoDB tables in your AWS account.
+
+## Notes
+
+- Ensure proper AWS IAM credentials and permissions are set for the Terraform execution.
+- Review and modify the configurations based on your specific requirements before applying changes to your AWS account.
+
+# STEP-3 :
+
+# AWS Lambda Function Deployment with Terraform
+
+This Terraform script deploys an AWS Lambda function along with required resources to support its execution.
+
+## Overview
+
+## Lambda configurations:
+
+```
+resource "random_pet" "lambda_bucket_name" {
+  prefix = "lambda"
+  length = 2
+}
+
+resource "aws_s3_bucket" "lambda_bucket" {
+  bucket        = random_pet.lambda_bucket_name.id
+  force_destroy = true
+}
+
+resource "aws_s3_bucket_public_access_block" "lambda_bucket" {
+  bucket = aws_s3_bucket.lambda_bucket.id
+
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
+
+
+
+resource "aws_iam_role" "BACKEND-POC_lambda_exec" {
+  name = "BACKEND-POC-lambda"
+
+  assume_role_policy = <<POLICY
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "lambda.amazonaws.com"
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+POLICY
+}
+
+resource "aws_iam_role_policy_attachment" "BACKEND-POC_lambda_policy" {
+  role       = aws_iam_role.BACKEND-POC_lambda_exec.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
+resource "aws_lambda_function" "BACKEND-POC" {
+  function_name = "BACKEND-POC"
+
+  s3_bucket = aws_s3_bucket.lambda_bucket.id
+  s3_key    = aws_s3_object.lambda_BACKEND-POC.key
+
+  runtime = "python3.11"
+  handler = "function.lambda_handler"
+
+  source_code_hash = data.archive_file.lambda_BACKEND-POC.output_base64sha256
+
+  role = aws_iam_role.BACKEND-POC_lambda_exec.arn
+}
+
+resource "aws_cloudwatch_log_group" "BACKEND-POC" {
+  name = "/aws/lambda/${aws_lambda_function.BACKEND-POC.function_name}"
+
+  retention_in_days = 14
+}
+
+data "archive_file" "lambda_BACKEND-POC" {
+  type = "zip"
+
+  source_file  = "function.py"
+  output_path = "BACKEND-POC.zip"
+}
+
+resource "aws_s3_object" "lambda_BACKEND-POC" {
+  bucket = aws_s3_bucket.lambda_bucket.id
+
+  key    = "BACKEND-POC.zip"
+  source = data.archive_file.lambda_BACKEND-POC.output_path
+
+  etag = filemd5(data.archive_file.lambda_BACKEND-POC.output_path)
+}
+
+
+resource "aws_iam_policy" "dynamodb_policy" {
+  name        = "DynamoDBPolicy"
+  description = "Policy allowing basic DynamoDB operations"
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect   = "Allow",
+        Action   = [
+          "dynamodb:PutItem",
+          "dynamodb:GetItem",
+          "dynamodb:UpdateItem",
+          "dynamodb:DeleteItem",
+          "dynamodb:Scan",
+          "dynamodb:Query"
+        ],
+        Resource = "arn:aws:dynamodb:*:*:table/*" // Replace with specific table ARNs if needed
+      }
+    ]
+  })
+}
+
+# Attach policy to Lambda's role
+resource "aws_iam_role_policy_attachment" "dynamodb_policy_attachment" {
+  policy_arn = aws_iam_policy.dynamodb_policy.arn
+  role       = aws_iam_role.BACKEND-POC_lambda_exec.name
+
+}
+
+```
+
+
+
+The infrastructure provisioned includes:
+
+- **Random Pet Name Generation**: Creates a random prefix-based name for the S3 bucket.
+- **S3 Bucket for Lambda**: Defines an S3 bucket to store the Lambda function's code.
+- **Public Access Block for S3 Bucket**: Restricts public access to the S3 bucket.
+- **IAM Role for Lambda Execution**: Grants necessary permissions to the Lambda function for execution.
+- **IAM Role Policy Attachment**: Attaches an AWS managed policy to the Lambda execution role.
+- **Lambda Function**: Deploys the Lambda function using the specified runtime and handler.
+- **CloudWatch Log Group**: Sets up a log group for Lambda function logs.
+- **Archive File and S3 Object**: Archives the Lambda function code and uploads it to the S3 bucket.
+- **IAM Policy for DynamoDB**: Defines a custom policy allowing basic DynamoDB operations.
+- **IAM Policy Attachment to Lambda's Role**: Attaches the DynamoDB policy to the Lambda execution role.
+
+## Terraform Resources
+
+### `random_pet` Resource
+
+Generates a random pet name prefix used for the S3 bucket naming.
+
+```
+resource "random_pet" "lambda_bucket_name" {
+  prefix = "lambda"
+  length = 2
+}
+
+```
+
+### `aws_s3_bucket` Resource
+
+Creates an S3 bucket with the random pet name for storing Lambda function code.
+
+```
+resource "aws_s3_bucket" "lambda_bucket" {
+  bucket        = random_pet.lambda_bucket_name.id
+  force_destroy = true
+}
+
+```
+
+### `aws_s3_bucket_public_access_block` Resource
+
+Applies public access block settings to the S3 bucket, restricting public access.
+
+```
+resource "aws_s3_bucket_public_access_block" "lambda_bucket" {
+  bucket = aws_s3_bucket.lambda_bucket.id
+
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
+```
+
+### `aws_iam_role` Resource
+
+Defines an IAM role for Lambda function execution.
+
+```
+
+resource "aws_iam_role" "BACKEND-POC_lambda_exec" {
+  name = "BACKEND-POC-lambda"
+
+  assume_role_policy = <<POLICY
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "lambda.amazonaws.com"
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+POLICY
+}
+
+```
+
+### `aws_iam_role_policy_attachment` Resource
+
+Attaches an AWS managed policy (`AWSLambdaBasicExecutionRole`) to the Lambda execution role.
+
+```
+
+resource "aws_iam_role_policy_attachment" "BACKEND-POC_lambda_policy" {
+  role       = aws_iam_role.BACKEND-POC_lambda_exec.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
+```
+
+### `aws_lambda_function` Resource
+
+Deploys the Lambda function using the specified code from the S3 bucket.
+
+```
+
+resource "aws_lambda_function" "BACKEND-POC" {
+  function_name = "BACKEND-POC"
+
+  s3_bucket = aws_s3_bucket.lambda_bucket.id
+  s3_key    = aws_s3_object.lambda_BACKEND-POC.key
+
+  runtime = "python3.11"
+  handler = "function.lambda_handler"
+
+  source_code_hash = data.archive_file.lambda_BACKEND-POC.output_base64sha256
+
+  role = aws_iam_role.BACKEND-POC_lambda_exec.arn
+}
+
+```
+
+### `aws_cloudwatch_log_group` Resource
+
+Sets up a CloudWatch log group for Lambda function logs.
+
+```
+
+resource "aws_cloudwatch_log_group" "BACKEND-POC" {
+  name = "/aws/lambda/${aws_lambda_function.BACKEND-POC.function_name}"
+
+  retention_in_days = 14
+}
+
+```
+
+### `data.archive_file` Resource
+
+Archives the Lambda function code and prepares it for upload to the S3 bucket.
+
+```
+data "archive_file" "lambda_BACKEND-POC" {
+  type = "zip"
+
+  source_file  = "function.py"
+  output_path = "BACKEND-POC.zip"
+}
+
+```
+
+### `aws_s3_object` Resource
+
+Uploads the archived Lambda function code to the S3 bucket.
+
+```
+
+resource "aws_s3_object" "lambda_BACKEND-POC" {
+  bucket = aws_s3_bucket.lambda_bucket.id
+
+  key    = "BACKEND-POC.zip"
+  source = data.archive_file.lambda_BACKEND-POC.output_path
+
+  etag = filemd5(data.archive_file.lambda_BACKEND-POC.output_path)
+}
+
+
+```
+
+### `aws_iam_policy` Resource
+
+Creates an IAM policy allowing basic DynamoDB operations.
+
+```
+
+resource "aws_iam_policy" "dynamodb_policy" {
+  name        = "DynamoDBPolicy"
+  description = "Policy allowing basic DynamoDB operations"
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect   = "Allow",
+        Action   = [
+          "dynamodb:PutItem",
+          "dynamodb:GetItem",
+          "dynamodb:UpdateItem",
+          "dynamodb:DeleteItem",
+          "dynamodb:Scan",
+          "dynamodb:Query"
+        ],
+        Resource = "arn:aws:dynamodb:*:*:table/*" // Replace with specific table ARNs if needed
+      }
+    ]
+  })
+}
+
+```
+
+### `aws_iam_role_policy_attachment` Resource
+
+Attaches the DynamoDB policy to the Lambda execution role for access to DynamoDB resources.
+
+```
+
+# Attach policy to Lambda's role
+resource "aws_iam_role_policy_attachment" "dynamodb_policy_attachment" {
+  policy_arn = aws_iam_policy.dynamodb_policy.arn
+  role       = aws_iam_role.BACKEND-POC_lambda_exec.name
+
+}
+
+```
+
+## Usage
+
+1. Ensure you have AWS credentials configured properly on your machine.
+2. Install Terraform and initialize the working directory.
+3. Customize the variables and resource configurations as needed.
+4. Run `terraform init` followed by `terraform apply` to provision the resources.
+
+## Important Note
+
+- Make sure to review and adjust resource configurations according to your specific requirements before applying this Terraform script in a production environment.
+
