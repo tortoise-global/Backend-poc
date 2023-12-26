@@ -886,6 +886,7 @@ Ensure AWS CLI is properly configured with necessary permissions.
 Run terraform init to initialize the working directory.
 Run terraform apply to create the AWS resources as defined in the script.
 Check the AWS Management Console or command line output for created resources.
+
 ```
 License
 This script is licensed under MIT License.
@@ -901,5 +902,265 @@ AWS Cognito Documentation
 Inspiration from Terraform AWS Provider
 
 For more detailed information, refer to the Terraform Documentation.
+
+
+# step 5
+
+# AWS API Gateway v2 CUSTOM-DOMAIN Terraform Configuration
+This Terraform configuration is designed to set up an AWS API Gateway v2 with TLS certificates, domain names, and API mappings.
+
+
+## Prerequisites
+
+- AWS CLI installed and configured with necessary permissions.
+- Terraform installed locally.
+
+## Setup
+
+1. Clone this repository.
+2. Ensure AWS credentials are properly set up in the environment.
+3. Modify the `main.tf` file with your specific configurations.
+
+## Configuration Details
+
+```
+
+#create TLS certificate.
+
+resource "aws_acm_certificate" "api" {
+  domain_name       = "devapi.turtil.co" //give your own end-point or backend url name (TLS certificate)
+  validation_method = "DNS"
+}
+
+data "aws_route53_zone" "public" {
+  name         = "turtil.co" // give your  own domain name
+  private_zone = false
+}
+
+resource "aws_route53_record" "api_validation" {
+  for_each = {
+    for dvo in aws_acm_certificate.api.domain_validation_options : dvo.domain_name => {
+      name   = dvo.resource_record_name
+      record = dvo.resource_record_value
+      type   = dvo.resource_record_type
+    }
+  }
+
+  allow_overwrite = true
+  name            = each.value.name
+  records         = [each.value.record]
+  ttl             = 60
+  type            = each.value.type
+  zone_id         = data.aws_route53_zone.public.zone_id
+}
+
+resource "aws_acm_certificate_validation" "api" {
+  certificate_arn         = aws_acm_certificate.api.arn
+  validation_record_fqdns = [for record in aws_route53_record.api_validation : record.fqdn]
+}
+
+
+
+
+# Specify the domain name, which should match the certificate i.e above given TLS certificate(for our case it is devapi.turtil.co)
+
+resource "aws_apigatewayv2_domain_name" "api" {
+  domain_name = "devapi.turtil.co"
+
+  domain_name_configuration {
+    certificate_arn = aws_acm_certificate.api.arn
+    endpoint_type   = "REGIONAL"
+    security_policy = "TLS_1_2"
+  }
+
+  depends_on = [aws_acm_certificate_validation.api]
+}
+
+resource "aws_route53_record" "api" {
+  name    = aws_apigatewayv2_domain_name.api.domain_name
+  type    = "A"
+  zone_id = data.aws_route53_zone.public.zone_id
+
+  alias {
+    name                   = aws_apigatewayv2_domain_name.api.domain_name_configuration[0].target_domain_name
+    zone_id                = aws_apigatewayv2_domain_name.api.domain_name_configuration[0].hosted_zone_id
+    evaluate_target_health = false
+  }
+}
+
+
+
+#let's create API mapping. The first one is for the base path. And the second one is to map the staging stage with the v1 path.
+
+resource "aws_apigatewayv2_api_mapping" "api" {
+  api_id      = aws_apigatewayv2_api.main.id
+  domain_name = aws_apigatewayv2_domain_name.api.id
+  stage       = aws_apigatewayv2_stage.dev.id
+}
+
+resource "aws_apigatewayv2_api_mapping" "api_v1" {
+  api_id          = aws_apigatewayv2_api.main.id
+  domain_name     = aws_apigatewayv2_domain_name.api.id
+  stage           = aws_apigatewayv2_stage.dev.id
+  api_mapping_key = "v1"
+}
+
+output "custom_domain_api" {
+  value = "https://${aws_apigatewayv2_api_mapping.api.domain_name}"
+}
+
+output "custom_domain_api_v1" {
+  value = "https://${aws_apigatewayv2_api_mapping.api_v1.domain_name}/${aws_apigatewayv2_api_mapping.api_v1.api_mapping_key}"
+}
+
+
+
+
+```
+
+
+### TLS Certificate Creation
+
+- A TLS certificate for `devapi.turtil.co` is created using AWS ACM (Amazon Certificate Manager).
+- DNS validation is used to validate the certificate.
+
+  ```
+  #create TLS certificate.
+
+    resource "aws_acm_certificate" "api" {
+      domain_name       = "devapi.turtil.co" //give your own end-point or backend url name (TLS certificate)
+      validation_method = "DNS"
+    }
+
+  ```
+
+### Route 53 Configuration
+
+- A Route 53 zone for `turtil.co` (public domain) is utilized for DNS validation.
+- Route 53 records are created for ACM certificate validation.
+
+  ```
+  data "aws_route53_zone" "public" {
+  name         = "turtil.co" // give your  own domain name
+  private_zone = false
+  }
+  
+  resource "aws_route53_record" "api_validation" {
+    for_each = {
+      for dvo in aws_acm_certificate.api.domain_validation_options : dvo.domain_name => {
+        name   = dvo.resource_record_name
+        record = dvo.resource_record_value
+        type   = dvo.resource_record_type
+      }
+    }
+  
+    allow_overwrite = true
+    name            = each.value.name
+    records         = [each.value.record]
+    ttl             = 60
+    type            = each.value.type
+    zone_id         = data.aws_route53_zone.public.zone_id
+  }
+  
+  resource "aws_acm_certificate_validation" "api" {
+    certificate_arn         = aws_acm_certificate.api.arn
+    validation_record_fqdns = [for record in aws_route53_record.api_validation : record.fqdn]
+  }
+
+  ```
+
+### API Gateway Configuration
+
+- An API Gateway domain name `devapi.turtil.co` is set up.
+- This domain name is associated with the ACM TLS certificate for secure communication.
+- The security policy is enforced to TLS 1.2.
+
+  ```
+  # Specify the domain name, which should match the certificate i.e above given TLS certificate(for our case it is devapi.turtil.co)
+
+  resource "aws_apigatewayv2_domain_name" "api" {
+    domain_name = "devapi.turtil.co"
+  
+    domain_name_configuration {
+      certificate_arn = aws_acm_certificate.api.arn
+      endpoint_type   = "REGIONAL"
+      security_policy = "TLS_1_2"
+    }
+  
+    depends_on = [aws_acm_certificate_validation.api]
+  }
+  
+  resource "aws_route53_record" "api" {
+    name    = aws_apigatewayv2_domain_name.api.domain_name
+    type    = "A"
+    zone_id = data.aws_route53_zone.public.zone_id
+  
+    alias {
+      name                   = aws_apigatewayv2_domain_name.api.domain_name_configuration[0].target_domain_name
+      zone_id                = aws_apigatewayv2_domain_name.api.domain_name_configuration[0].hosted_zone_id
+      evaluate_target_health = false
+    }
+  }
+
+  ```
+
+### API Mapping
+
+- Two API mappings are created:
+  - The first mapping is for the base path of the API.
+  - The second mapping directs the `v1` path to the `staging` stage of the API.
+ 
+    ```
+        
+    #let's create API mapping. The first one is for the base path. And the second one is to map the staging stage with the v1 path.
+    
+    resource "aws_apigatewayv2_api_mapping" "api" {
+      api_id      = aws_apigatewayv2_api.main.id
+      domain_name = aws_apigatewayv2_domain_name.api.id
+      stage       = aws_apigatewayv2_stage.dev.id
+    }
+    
+    resource "aws_apigatewayv2_api_mapping" "api_v1" {
+      api_id          = aws_apigatewayv2_api.main.id
+      domain_name     = aws_apigatewayv2_domain_name.api.id
+      stage           = aws_apigatewayv2_stage.dev.id
+      api_mapping_key = "v1"
+    }
+    
+    output "custom_domain_api" {
+      value = "https://${aws_apigatewayv2_api_mapping.api.domain_name}"
+    }
+    
+    output "custom_domain_api_v1" {
+      value = "https://${aws_apigatewayv2_api_mapping.api_v1.domain_name}/${aws_apigatewayv2_api_mapping.api_v1.api_mapping_key}"
+    }
+    
+    ```
+    
+
+## Usage
+
+1. Run `terraform init` to initialize the Terraform configuration.
+2. Run `terraform plan` to review the changes that will be applied.
+3. Run `terraform apply` to apply the changes and create the infrastructure.
+4. Check the AWS Management Console to verify the setup.
+
+## Outputs
+
+- `custom_domain_api`: Provides the URL for accessing the base path of the API.
+- `custom_domain_api_v1`: Provides the URL for accessing the `v1` path of the API.
+
+## Clean Up
+
+To remove the created resources:
+
+1. Run `terraform destroy` to delete all the resources provisioned by this Terraform configuration.
+2. Confirm the deletion when prompted.
+
+## Notes
+
+- Ensure proper permissions and configurations are set to avoid any issues during resource creation and management.
+- Review and modify the Terraform code according to specific requirements and security best practices.
+
 
 
