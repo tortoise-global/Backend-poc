@@ -633,3 +633,273 @@ resource "aws_iam_role_policy_attachment" "dynamodb_policy_attachment" {
 
 - Make sure to review and adjust resource configurations according to your specific requirements before applying this Terraform script in a production environment.
 
+
+
+
+
+
+# step4
+
+## AWS Cognito User Pool and Client Setup
+
+This Terraform script provisions an AWS Cognito User Pool and a corresponding User Pool Client, setting up authentication mechanisms and configurations for user management.
+
+Prerequisites
+Ensure you have the following before executing this Terraform script:
+
+AWS CLI configured with necessary permissions
+Terraform installed on your local machine
+## Configuration
+
+```
+
+// Resources
+resource "aws_cognito_user_pool" "user_pool" {
+  name = "user-pool"
+
+  username_attributes = ["email"]
+  auto_verified_attributes = ["email"]
+  password_policy {
+    minimum_length = 6
+    //require_lowercase = true
+    //require_numbers   = true
+   // require_symbols   = true
+   // require_uppercase = true
+  }
+
+  verification_message_template {
+    default_email_option = "CONFIRM_WITH_CODE"
+    email_subject        = "Account Confirmation"
+    email_message        = "Your confirmation code is {####}"
+  }
+
+  schema {
+    name     = "email"
+    attribute_data_type = "String"
+    required = true
+    mutable  = true
+
+    string_attribute_constraints {
+      min_length = 1
+      max_length = 256
+    }
+
+/*
+    schema {
+    name = "name"
+    attribute_data_type = "String"
+    mutable = true
+    required = true
+  }
+
+  schema {
+    name = "phonenumber"
+    attribute_data_type = "String"
+    mutable = true
+    required = true
+  }
+
+  schema {
+    name = "address"
+    attribute_data_type = "String"
+    mutable = true
+    required = true
+  }
+*/
+ }
+}
+
+
+
+resource "aws_cognito_user_pool_client" "client" {
+  name                            = "cognito-client"
+  user_pool_id                    = aws_cognito_user_pool.user_pool.id
+  generate_secret                 = false
+  refresh_token_validity          = 90
+  prevent_user_existence_errors   = "ENABLED"
+ // allowed_oauth_flows             = ["code", "implicit", "client_credentials"]  # Updated with correct values
+  allowed_oauth_flows             = ["implicit"]  # Updated with correct values
+
+  allowed_oauth_flows_user_pool_client = true
+  allowed_oauth_scopes            = ["openid"]
+  callback_urls                   = ["https://turtil.raj/callback"]  # Specify your callback URL(s) here
+  explicit_auth_flows             = [
+    "ALLOW_REFRESH_TOKEN_AUTH",
+    "ALLOW_USER_PASSWORD_AUTH",
+    "ALLOW_ADMIN_USER_PASSWORD_AUTH"
+  ]
+}
+
+resource "aws_cognito_user_pool_domain" "cognito-domain" {
+  domain       = "turtil"
+  user_pool_id = aws_cognito_user_pool.user_pool.id
+}
+
+
+```
+
+
+## The Terraform script consists of three main resources:
+
+### AWS Cognito User Pool
+Resource: aws_cognito_user_pool.user_pool
+
+```
+resource "aws_cognito_user_pool" "user_pool" {
+  name = "user-pool"
+
+  username_attributes = ["email"]
+  auto_verified_attributes = ["email"]
+  password_policy {
+    minimum_length = 6
+    //require_lowercase = true
+    //require_numbers   = true
+   // require_symbols   = true
+   // require_uppercase = true
+  }
+
+  verification_message_template {
+    default_email_option = "CONFIRM_WITH_CODE"
+    email_subject        = "Account Confirmation"
+    email_message        = "Your confirmation code is {####}"
+  }
+
+  schema {
+    name     = "email"
+    attribute_data_type = "String"
+    required = true
+    mutable  = true
+
+    string_attribute_constraints {
+      min_length = 1
+      max_length = 256
+    }
+
+/*
+    schema {
+    name = "name"
+    attribute_data_type = "String"
+    mutable = true
+    required = true
+  }
+
+  schema {
+    name = "phonenumber"
+    attribute_data_type = "String"
+    mutable = true
+    required = true
+  }
+
+  schema {
+    name = "address"
+    attribute_data_type = "String"
+    mutable = true
+    required = true
+  }
+*/
+ }
+}
+
+```
+
+Name: "user-pool"
+
+Username Attributes: Email
+
+Auto-verified Attributes: Email
+
+Password Policy:
+
+Minimum Length: 6
+(Optional) Uncomment and customize to require lowercase, uppercase, numbers, and symbols in passwords.
+Verification Message Template:
+
+Default Email Option: "CONFIRM_WITH_CODE"
+Email Subject: "Account Confirmation"
+Email Message: "Your confirmation code is {####}"
+Schema:
+
+Defines user attributes like email with constraints for length.
+<!-- Uncomment below sections for additional attributes like name, phone number, and address -->
+<!--
+- `name`: "String", Mutable, Required
+- `phonenumber`: "String", Mutable, Required
+- `address`: "String", Mutable, Required
+-->
+### AWS Cognito User Pool Client
+Resource: aws_cognito_user_pool_client.client
+
+```
+resource "aws_cognito_user_pool_client" "client" {
+  name                            = "cognito-client"
+  user_pool_id                    = aws_cognito_user_pool.user_pool.id
+  generate_secret                 = false
+  refresh_token_validity          = 90
+  prevent_user_existence_errors   = "ENABLED"
+ // allowed_oauth_flows             = ["code", "implicit", "client_credentials"]  # Updated with correct values
+  allowed_oauth_flows             = ["implicit"]  # Updated with correct values
+
+  allowed_oauth_flows_user_pool_client = true
+  allowed_oauth_scopes            = ["openid"]
+  callback_urls                   = ["https://turtil.raj/callback"]  # Specify your callback URL(s) here
+  explicit_auth_flows             = [
+    "ALLOW_REFRESH_TOKEN_AUTH",
+    "ALLOW_USER_PASSWORD_AUTH",
+    "ALLOW_ADMIN_USER_PASSWORD_AUTH"
+  ]
+}
+
+
+```
+
+Name: "cognito-client"
+User Pool ID: Obtained from the created user pool
+Generate Secret: Disabled
+Refresh Token Validity: 90 days
+Error Handling: Enabled to prevent user existence errors
+OAuth Flows:
+Allowed OAuth Flows: "implicit"
+Allowed OAuth Flows User Pool Client: Enabled
+OAuth Scopes: OpenID
+Callback URLs: Specify your callback URL(s) here
+Explicit Auth Flows: Allow Refresh Token Auth, User Password Auth, Admin User Password Auth
+
+### AWS Cognito User Pool Domain
+Resource: aws_cognito_user_pool_domain.cognito-domain
+
+```
+resource "aws_cognito_user_pool_domain" "cognito-domain" {
+  domain       = "turtil"
+  user_pool_id = aws_cognito_user_pool.user_pool.id
+}
+
+```
+
+Domain: "turtil"
+User Pool ID: Obtained from the created user pool
+
+### Usage
+
+```
+Clone this repository.
+Ensure AWS CLI is properly configured with necessary permissions.
+Run terraform init to initialize the working directory.
+Run terraform apply to create the AWS resources as defined in the script.
+Check the AWS Management Console or command line output for created resources.
+```
+License
+This script is licensed under MIT License.
+
+Contributors
+S.Rajsekhar - Role
+
+
+Acknowledgments
+
+AWS Cognito Documentation
+
+Inspiration from Terraform AWS Provider
+
+For more detailed information, refer to the Terraform Documentation.
+
+
