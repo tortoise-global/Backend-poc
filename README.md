@@ -1250,3 +1250,413 @@ To remove the created resources:
 
 
 
+# step 7
+
+# AWS API Gateway with Lambda Integration and Cognito Authorization
+
+This Terraform code creates an AWS API Gateway, integrating it with AWS Lambda functions and setting up Cognito-based authorization for secure API access.
+
+## Prerequisites
+
+- **AWS Account:** Ensure you have an AWS account and necessary permissions.
+- **Terraform:** Install Terraform to manage the infrastructure.
+- **AWS CLI:** Configure AWS CLI with appropriate credentials.
+
+## Structure
+
+The code consists of the following main resources:
+
+- **AWS API Gateway (`aws_apigatewayv2_api`):**
+  - Creates an HTTP API named "main."
+
+- **API Stages (`aws_apigatewayv2_stage`):**
+  - Defines a "dev" stage for the API and enables auto-deployment.
+  - Configures access logs to stream into CloudWatch for monitoring.
+
+- **CloudWatch Log Group (`aws_cloudwatch_log_group`):**
+  - Creates a log group to store API Gateway access logs.
+
+- **Lambda Integration (`aws_apigatewayv2_integration`):**
+  - Integrates Lambda function ("BACKEND-POC") with the API using AWS_PROXY for POST requests.
+
+- **Cognito Authorizer (`aws_apigatewayv2_authorizer`):**
+  - Sets up a JWT-based authorizer using Cognito for API authorization.
+
+- **API Routes (`aws_apigatewayv2_route`):**
+  - Defines various routes for different HTTP methods (GET, POST, DELETE) with associated integration and authorization.
+
+- **Lambda Permission (`aws_lambda_permission`):**
+  - Grants API Gateway permission to invoke the Lambda function.
+
+## Configuration
+
+```
+
+resource "aws_apigatewayv2_api" "main" {
+  name          = "main"  // give your own name
+  protocol_type = "HTTP"
+}
+
+resource "aws_apigatewayv2_stage" "dev" {
+  api_id = aws_apigatewayv2_api.main.id
+
+  name        = "dev" // give your own name
+  auto_deploy = true
+
+  access_log_settings {
+    destination_arn = aws_cloudwatch_log_group.main_api_gw.arn
+
+    format = jsonencode({
+      requestId               = "$context.requestId"
+      sourceIp                = "$context.identity.sourceIp"
+      requestTime             = "$context.requestTime"
+      protocol                = "$context.protocol"
+      httpMethod              = "$context.httpMethod"
+      resourcePath            = "$context.resourcePath"
+      routeKey                = "$context.routeKey"
+      status                  = "$context.status"
+      responseLength          = "$context.responseLength"
+      integrationErrorMessage = "$context.integrationErrorMessage"
+      }
+    )
+  }
+}
+
+resource "aws_cloudwatch_log_group" "main_api_gw" {
+  name = "/aws/api-gw/${aws_apigatewayv2_api.main.name}"
+
+  retention_in_days = 14
+}
+
+variable "AWS_REGION" {
+  description = "The AWS region where resources will be deployed"
+  default     = "us-east-1"  # Set your preferred default AWS region here
+}
+
+
+
+resource "aws_apigatewayv2_integration" "lambda_BACKEND-POC" {
+  api_id = aws_apigatewayv2_api.main.id
+
+  integration_uri    = aws_lambda_function.BACKEND-POC.invoke_arn
+  integration_type   = "AWS_PROXY"
+  integration_method = "POST"
+}
+
+resource "aws_apigatewayv2_authorizer" "cognito_authorizer" {
+  api_id             = aws_apigatewayv2_api.main.id
+  name               = "cognito-authorizer"
+  authorizer_type    = "JWT"
+  identity_sources   = ["$request.header.Authorization"]  # Assuming JWT token is in the Authorization header
+  jwt_configuration {
+    issuer             = "https://cognito-idp.${var.AWS_REGION}.amazonaws.com/${aws_cognito_user_pool.user_pool.id}"
+    audience           = [aws_cognito_user_pool_client.client.id]
+  }
+}
+
+resource "aws_apigatewayv2_route" "get_BACKEND-POC" {
+  api_id        = aws_apigatewayv2_api.main.id
+  route_key     = "GET /allpost" // give your own endpoint name in place of allpost
+  target        = "integrations/${aws_apigatewayv2_integration.lambda_BACKEND-POC.id}"
+  authorization_type    = "JWT"
+  //authorization_scopes = ["openid"]  # Set the required scopes for authorization
+  authorizer_id        = aws_apigatewayv2_authorizer.cognito_authorizer.id
+}
+
+
+
+resource "aws_apigatewayv2_route" "post_BACKEND-POC" {
+  api_id = aws_apigatewayv2_api.main.id
+
+  route_key = "POST /addpost" // give your own endpoint name in place of addpost
+  target    = "integrations/${aws_apigatewayv2_integration.lambda_BACKEND-POC.id}"
+}
+
+
+
+
+resource "aws_apigatewayv2_route" "deletepost_BACKEND-POC" {
+  api_id = aws_apigatewayv2_api.main.id
+
+  route_key = "DELETE /deletepostbypostid"
+  target    = "integrations/${aws_apigatewayv2_integration.lambda_BACKEND-POC.id}"
+}
+
+
+resource "aws_apigatewayv2_route" "addsignup_BACKEND-POC" {
+  api_id = aws_apigatewayv2_api.main.id
+
+  route_key = "POST /addsignup"
+  target    = "integrations/${aws_apigatewayv2_integration.lambda_BACKEND-POC.id}"
+}
+
+
+resource "aws_apigatewayv2_route" "get_token_BACKEND-POC" {
+  api_id = aws_apigatewayv2_api.main.id
+
+  route_key = "GET /get_token" // give your own endpoint name in place of allpost
+  target    = "integrations/${aws_apigatewayv2_integration.lambda_BACKEND-POC.id}"
+}
+
+
+
+resource "aws_lambda_permission" "api_gw" {
+  statement_id  = "AllowExecutionFromAPIGateway"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.BACKEND-POC.function_name
+  principal     = "apigateway.amazonaws.com"
+
+  source_arn = "${aws_apigatewayv2_api.main.execution_arn}/*/*"
+}
+
+output "BACKEND-POC_base_url" {
+  value = aws_apigatewayv2_stage.dev.invoke_url
+}
+
+
+```
+
+
+AWS API Gatewayv2 Setup with AWS Lambda Integration
+This Terraform script sets up an AWS API Gatewayv2 instance with HTTP protocol type and integrates it with an AWS Lambda function. The API Gatewayv2 instance has defined routes for various HTTP methods, enabling communication between clients and the Lambda function.
+
+Prerequisites
+Before running this Terraform script, ensure you have the following:
+
+An AWS account with appropriate permissions to create API Gatewayv2, Lambda, and CloudWatch Log Group resources.
+Terraform installed locally.
+AWS CLI configured with necessary credentials.
+Usage
+Clone this repository or download the Terraform script (main.tf) to your local environment.
+Open a terminal or command prompt and navigate to the directory containing the script.
+Run terraform init to initialize Terraform and download necessary providers.
+Run terraform plan to review the execution plan.
+Run terraform apply to create the resources as defined in the script.
+Description
+This Terraform script creates the following AWS resources:
+
+### API Gatewayv2 API: Defines an HTTP protocol type API named "main".
+
+```
+
+resource "aws_apigatewayv2_api" "main" {
+  name          = "main"  // give your own name
+  protocol_type = "HTTP"
+}
+
+
+```
+
+### API Gatewayv2 Stage: Creates a "dev" stage for the API with automatic deployment enabled. Also configures access logging to a specified CloudWatch Log Group with JSON formatting of log entries.
+
+```
+
+resource "aws_apigatewayv2_stage" "dev" {
+  api_id = aws_apigatewayv2_api.main.id
+
+  name        = "dev" // give your own name
+  auto_deploy = true
+
+  access_log_settings {
+    destination_arn = aws_cloudwatch_log_group.main_api_gw.arn
+
+    format = jsonencode({
+      requestId               = "$context.requestId"
+      sourceIp                = "$context.identity.sourceIp"
+      requestTime             = "$context.requestTime"
+      protocol                = "$context.protocol"
+      httpMethod              = "$context.httpMethod"
+      resourcePath            = "$context.resourcePath"
+      routeKey                = "$context.routeKey"
+      status                  = "$context.status"
+      responseLength          = "$context.responseLength"
+      integrationErrorMessage = "$context.integrationErrorMessage"
+      }
+    )
+  }
+}
+
+
+```
+
+### CloudWatch Log Group: Sets up a log group to store API Gatewayv2 access logs with a retention period of 14 days.
+
+```
+resource "aws_cloudwatch_log_group" "main_api_gw" {
+  name = "/aws/api-gw/${aws_apigatewayv2_api.main.name}"
+
+  retention_in_days = 14
+}
+
+
+```
+
+### API Gatewayv2 Integration: Connects the API Gatewayv2 instance to an AWS Lambda function using an AWS_PROXY integration type and HTTP method POST.
+
+```
+
+resource "aws_apigatewayv2_integration" "lambda_BACKEND-POC" {
+  api_id = aws_apigatewayv2_api.main.id
+
+  integration_uri    = aws_lambda_function.BACKEND-POC.invoke_arn
+  integration_type   = "AWS_PROXY"
+  integration_method = "POST"
+}
+
+```
+
+### Cognito Authorization: Configures a JWT-based authorizer for securing API endpoints.
+
+```
+
+resource "aws_apigatewayv2_authorizer" "cognito_authorizer" {
+  api_id             = aws_apigatewayv2_api.main.id
+  name               = "cognito-authorizer"
+  authorizer_type    = "JWT"
+  identity_sources   = ["$request.header.Authorization"]  # Assuming JWT token is in the Authorization header
+  jwt_configuration {
+    issuer             = "https://cognito-idp.${var.AWS_REGION}.amazonaws.com/${aws_cognito_user_pool.user_pool.id}"
+    audience           = [aws_cognito_user_pool_client.client.id]
+  }
+}
+
+
+```
+
+
+### API Gatewayv2 Routes: Defines specific routes (GET /allpost and POST /addpost) mapped to the AWS Lambda integration.
+
+```
+resource "aws_apigatewayv2_route" "get_BACKEND-POC" {
+  api_id        = aws_apigatewayv2_api.main.id
+  route_key     = "GET /allpost" // give your own endpoint name in place of allpost
+  target        = "integrations/${aws_apigatewayv2_integration.lambda_BACKEND-POC.id}"
+  authorization_type    = "JWT"
+  //authorization_scopes = ["openid"]  # Set the required scopes for authorization
+  authorizer_id        = aws_apigatewayv2_authorizer.cognito_authorizer.id
+}
+
+
+
+resource "aws_apigatewayv2_route" "post_BACKEND-POC" {
+  api_id = aws_apigatewayv2_api.main.id
+
+  route_key = "POST /addpost" // give your own endpoint name in place of addpost
+  target    = "integrations/${aws_apigatewayv2_integration.lambda_BACKEND-POC.id}"
+}
+
+
+
+
+resource "aws_apigatewayv2_route" "deletepost_BACKEND-POC" {
+  api_id = aws_apigatewayv2_api.main.id
+
+  route_key = "DELETE /deletepostbypostid"
+  target    = "integrations/${aws_apigatewayv2_integration.lambda_BACKEND-POC.id}"
+}
+
+
+resource "aws_apigatewayv2_route" "addsignup_BACKEND-POC" {
+  api_id = aws_apigatewayv2_api.main.id
+
+  route_key = "POST /addsignup"
+  target    = "integrations/${aws_apigatewayv2_integration.lambda_BACKEND-POC.id}"
+}
+
+
+resource "aws_apigatewayv2_route" "get_token_BACKEND-POC" {
+  api_id = aws_apigatewayv2_api.main.id
+
+  route_key = "GET /get_token" // give your own endpoint name in place of allpost
+  target    = "integrations/${aws_apigatewayv2_integration.lambda_BACKEND-POC.id}"
+}
+
+
+
+```
+
+### AWS Lambda Permission: Grants permission to API Gatewayv2 to invoke the associated Lambda function.
+
+```
+
+resource "aws_lambda_permission" "api_gw" {
+  statement_id  = "AllowExecutionFromAPIGateway"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.BACKEND-POC.function_name
+  principal     = "apigateway.amazonaws.com"
+
+  source_arn = "${aws_apigatewayv2_api.main.execution_arn}/*/*"
+}
+
+output "BACKEND-POC_base_url" {
+  value = aws_apigatewayv2_stage.dev.invoke_url
+}
+
+```
+
+Notes
+Ensure proper AWS permissions and roles are configured for the resources to function correctly.
+Additional routes (e.g., DELETE and PUT) are provided as commented-out code. Uncomment and configure these routes as needed.
+Outputs
+BACKEND-POC_base_url: Provides the base URL of the "dev" stage for accessing the API Gatewayv2.
+Cleanup
+To delete the created resources:
+
+Run terraform destroy to remove all the resources provisioned by this script.
+Confirm the deletion by entering 'yes' when prompted.
+Feel free to customize this README further based on your project's specific requirements and add any additional information or instructions as needed.
+
+
+
+
+
+
+
+
+
+### Variables
+
+- `AWS_REGION`: Specifies the AWS region for deployment.
+
+### Resources
+
+1. **API Gateway Setup:**
+   - Creates an HTTP API named "main."
+   - Establishes a "dev" stage with auto-deployment and CloudWatch logging.
+
+2. **Cognito Authorization:**
+   - Configures a JWT-based authorizer for securing API endpoints.
+
+3. **Lambda Integration:**
+   - Integrates the API with the Lambda function "BACKEND-POC" for various HTTP methods (GET, POST, DELETE).
+
+4. **Route Configuration:**
+   - Defines routes ("/allpost", "/addpost", "/deletepostbypostid", "/addsignup", "/get_token") with associated integrations and authorization.
+
+5. **Permissions:**
+   - Grants permission for API Gateway to invoke the specified Lambda function.
+
+## Usage
+
+1. **Clone Repository:**
+
+2. **Initialize Terraform:**
+
+3. **Review and Apply Changes:**
+
+4. **Accessing API:**
+- Retrieve the API base URL from the Terraform output.
+- Use appropriate HTTP methods with endpoints ("/allpost", "/addpost", etc.) for testing.
+
+## Notes
+
+- Ensure AWS credentials are configured properly.
+- Customize endpoint names, AWS region, and other configurations as needed.
+- Monitor CloudWatch logs for API activity and errors.
+
+
+
+
+
+
+
