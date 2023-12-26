@@ -634,11 +634,97 @@ resource "aws_iam_role_policy_attachment" "dynamodb_policy_attachment" {
 - Make sure to review and adjust resource configurations according to your specific requirements before applying this Terraform script in a production environment.
 
 
+# step 4
+
+# AWS Lambda Layer with Terraform
+
+This Terraform script creates an AWS Lambda Layer to share common libraries, dependencies, or code across multiple Lambda functions. 
+
+## Overview
+
+AWS Lambda Layers are a way to centralize and manage common code, libraries, and dependencies that multiple Lambda functions may use. This Terraform script demonstrates the creation of an AWS Lambda Layer that can be attached to Lambda functions.
+
+## Prerequisites
+
+Before using this Terraform script, ensure you have the following:
+- An AWS account with appropriate permissions to create Lambda Layers using Terraform.
+- Terraform installed locally. You can download it from [Terraform's official website](https://www.terraform.io/downloads.html).
+- A ZIP file containing the necessary Python libraries or code that you want to include in the Lambda Layer. Ensure it is named `python.zip` or update the `filename` field in the script accordingly.
+
+## Configuration
+
+```
+
+# Create Lambda Layer
+resource "aws_lambda_layer_version" "my_lambda_layer" {
+  filename             = "python.zip"  # Replace with the path to your ZIP file
+  layer_name           = "my_lambda_layer"
+  compatible_runtimes  = ["python3.11"]  # Replace with your desired Python version
+}
+
+
+//output "layer_arn" {
+  //value = aws_lambda_layer_version.my_lambda_layer.arn
+//}
+
+```
+
+1. **File Structure:**
+
+    Place the `python.zip` file containing the Python libraries or code in the same directory where you have the Terraform script (`.tf` file). If the ZIP file is located elsewhere, update the `filename` field in the Terraform script with the correct path.
+
+2. **Edit Terraform Script:**
+
+    - Open the `main.tf` or your Terraform script file.
+    - Locate the resource block for `aws_lambda_layer_version`.
+    - Update the `filename` attribute with the correct path to your `python.zip` file.
+    - Optionally, modify the `layer_name` and `compatible_runtimes` according to your requirements.
+
+## Usage
+
+1. **Initialize Terraform:**
+
+    ```bash
+    terraform init
+    ```
+
+2. **Review Changes:**
+
+    Check the changes Terraform will make before applying them:
+
+    ```bash
+    terraform plan
+    ```
+
+3. **Apply Changes:**
+
+    If everything looks correct, apply the changes to create the Lambda Layer:
+
+    ```bash
+    terraform apply
+    ```
+
+4. **Cleanup (Optional):**
+
+    To remove the created Lambda Layer:
+
+    ```bash
+    terraform destroy
+    ```
+
+## Resources
+
+- [Terraform Documentation](https://www.terraform.io/docs/index.html)
+- [AWS Lambda Layers Documentation](https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html)
+
+## License
+
+This Terraform script is licensed under [MIT License](LICENSE).
 
 
 
 
-# step4
+# step 5
 
 ## AWS Cognito User Pool and Client Setup
 
@@ -904,7 +990,7 @@ Inspiration from Terraform AWS Provider
 For more detailed information, refer to the Terraform Documentation.
 
 
-# step 5
+# step 6
 
 # AWS API Gateway v2 CUSTOM-DOMAIN Terraform Configuration
 This Terraform configuration is designed to set up an AWS API Gateway v2 with TLS certificates, domain names, and API mappings.
