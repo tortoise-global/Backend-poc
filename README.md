@@ -316,6 +316,12 @@ resource "aws_s3_bucket_public_access_block" "lambda_bucket" {
 }
 
 
+# Create Lambda Layer
+resource "aws_lambda_layer_version" "my_lambda_layer" {
+  filename             = "python.zip"  # Replace with the path to your ZIP file
+  layer_name           = "my_lambda_layer"
+  compatible_runtimes  = ["python3.11"]  # Replace with your desired Python version
+}
 
 
 resource "aws_iam_role" "BACKEND-POC_lambda_exec" {
@@ -354,6 +360,9 @@ resource "aws_lambda_function" "BACKEND-POC" {
   source_code_hash = data.archive_file.lambda_BACKEND-POC.output_base64sha256
 
   role = aws_iam_role.BACKEND-POC_lambda_exec.arn
+
+  # Attach Lambda Layer
+  layers = [aws_lambda_layer_version.my_lambda_layer.arn]
 }
 
 resource "aws_cloudwatch_log_group" "BACKEND-POC" {
@@ -409,6 +418,59 @@ resource "aws_iam_role_policy_attachment" "dynamodb_policy_attachment" {
 
 }
 
+
+
+//resource "aws_iam_policy_attachment" "dynamodb_policy_attachment" {
+  //name       = "DynamoDBPolicyAttachment"
+  //roles       = aws_iam_role.BACKEND-POC_lambda_exec.name
+  //roles      = [aws_iam_role.dynamodb_policy.id] // Replace with your DynamoDB role name
+  //policy_arn = aws_iam_policy.dynamodb_policy.arn
+  //policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+//}
+
+
+// to create cognito user
+resource "aws_iam_policy" "cognito_admin_create_user_policy" {
+  name        = "CognitoAdminCreateUserPolicy"
+  description = "Policy allowing AdminCreateUser in Cognito User Pool"
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [{
+      Effect    = "Allow",
+      Action    = "cognito-idp:AdminCreateUser",
+      Resource  = "arn:aws:cognito-idp:us-east-1:033464272864:userpool/us-east-1_EUHla6BwY"
+    }]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "cognito_admin_create_user_attachment" {
+  policy_arn = aws_iam_policy.cognito_admin_create_user_policy.arn
+  role       = aws_iam_role.BACKEND-POC_lambda_exec.name
+}
+
+// to create password
+resource "aws_iam_policy" "cognito_admin_set_password_policy" {
+  name        = "CognitoAdminSetPasswordPolicy"
+  description = "Policy allowing AdminSetUserPassword in Cognito User Pool"
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect    = "Allow",
+        Action    = "cognito-idp:AdminSetUserPassword",
+        Resource  = "arn:aws:cognito-idp:us-east-1:033464272864:userpool/us-east-1_EUHla6BwY"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "cognito_admin_set_password_attachment" {
+  policy_arn = aws_iam_policy.cognito_admin_set_password_policy.arn
+  role       = aws_iam_role.BACKEND-POC_lambda_exec.name
+}
+
 ```
 
 
@@ -418,6 +480,7 @@ The infrastructure provisioned includes:
 - **Random Pet Name Generation**: Creates a random prefix-based name for the S3 bucket.
 - **S3 Bucket for Lambda**: Defines an S3 bucket to store the Lambda function's code.
 - **Public Access Block for S3 Bucket**: Restricts public access to the S3 bucket.
+- **Lambda Layer: Defines a Lambda layer for the specified Python runtime.
 - **IAM Role for Lambda Execution**: Grants necessary permissions to the Lambda function for execution.
 - **IAM Role Policy Attachment**: Attaches an AWS managed policy to the Lambda execution role.
 - **Lambda Function**: Deploys the Lambda function using the specified runtime and handler.
@@ -425,6 +488,10 @@ The infrastructure provisioned includes:
 - **Archive File and S3 Object**: Archives the Lambda function code and uploads it to the S3 bucket.
 - **IAM Policy for DynamoDB**: Defines a custom policy allowing basic DynamoDB operations.
 - **IAM Policy Attachment to Lambda's Role**: Attaches the DynamoDB policy to the Lambda execution role.
+- **IAM Policy for Cognito AdminCreateUser (`aws_iam_policy.cognito_admin_create_user_policy`):** Defines a policy allowing AdminCreateUser in a Cognito User Pool.
+- **IAM Role Policy Attachment for Cognito AdminCreateUser (`aws_iam_role_policy_attachment.cognito_admin_create_user_attachment`):** Attaches the Cognito AdminCreateUser policy to the Lambda's execution role.
+- **IAM Policy for Cognito AdminSetUserPassword (`aws_iam_policy.cognito_admin_set_password_policy`):** Defines a policy allowing AdminSetUserPassword in a Cognito User Pool.
+- **IAM Role Policy Attachment for Cognito AdminSetUserPassword (`aws_iam_role_policy_attachment.cognito_admin_set_password_attachment`):** Attaches the Cognito AdminSetUserPassword policy to the Lambda's execution role.
 
 ## Terraform Resources
 
@@ -464,6 +531,19 @@ resource "aws_s3_bucket_public_access_block" "lambda_bucket" {
   block_public_policy     = true
   ignore_public_acls      = true
   restrict_public_buckets = true
+}
+
+```
+### `Lambda Layer` Resource
+
+create a Lambda layer for the specified Python runtime.
+
+```
+# Create Lambda Layer
+resource "aws_lambda_layer_version" "my_lambda_layer" {
+  filename             = "python.zip"  # Replace with the path to your ZIP file
+  layer_name           = "my_lambda_layer"
+  compatible_runtimes  = ["python3.11"]  # Replace with your desired Python version
 }
 
 ```
@@ -621,6 +701,78 @@ resource "aws_iam_role_policy_attachment" "dynamodb_policy_attachment" {
 }
 
 ```
+
+### IAM Policy for Cognito AdminCreateUser (`aws_iam_policy.cognito_admin_create_user_policy`)
+Defines a policy allowing AdminCreateUser in a Cognito User Pool.
+
+```
+// to create cognito user
+resource "aws_iam_policy" "cognito_admin_create_user_policy" {
+  name        = "CognitoAdminCreateUserPolicy"
+  description = "Policy allowing AdminCreateUser in Cognito User Pool"
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [{
+      Effect    = "Allow",
+      Action    = "cognito-idp:AdminCreateUser",
+      Resource  = "arn:aws:cognito-idp:us-east-1:033464272864:userpool/us-east-1_EUHla6BwY"
+    }]
+  })
+}
+
+```
+
+### IAM Role Policy Attachment for Cognito AdminCreateUser (`aws_iam_role_policy_attachment.cognito_admin_create_user_attachment`)
+Attaches the Cognito AdminCreateUser policy to the Lambda's execution role.
+
+```
+
+resource "aws_iam_role_policy_attachment" "cognito_admin_create_user_attachment" {
+  policy_arn = aws_iam_policy.cognito_admin_create_user_policy.arn
+  role       = aws_iam_role.BACKEND-POC_lambda_exec.name
+}
+
+```
+
+
+### IAM Policy for Cognito AdminSetUserPassword (`aws_iam_policy.cognito_admin_set_password_policy`)
+Defines a policy allowing AdminSetUserPassword in a Cognito User Pool.
+
+```
+// to create password
+resource "aws_iam_policy" "cognito_admin_set_password_policy" {
+  name        = "CognitoAdminSetPasswordPolicy"
+  description = "Policy allowing AdminSetUserPassword in Cognito User Pool"
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect    = "Allow",
+        Action    = "cognito-idp:AdminSetUserPassword",
+        Resource  = "arn:aws:cognito-idp:us-east-1:033464272864:userpool/us-east-1_EUHla6BwY"
+      }
+    ]
+  })
+}
+
+```
+
+
+### IAM Role Policy Attachment for Cognito AdminSetUserPassword (`aws_iam_role_policy_attachment.cognito_admin_set_password_attachment`)
+Attaches the Cognito AdminSetUserPassword policy to the Lambda's execution role.
+
+```
+
+resource "aws_iam_role_policy_attachment" "cognito_admin_set_password_attachment" {
+  policy_arn = aws_iam_policy.cognito_admin_set_password_policy.arn
+  role       = aws_iam_role.BACKEND-POC_lambda_exec.name
+}
+
+```
+
+
 
 ## Usage
 
