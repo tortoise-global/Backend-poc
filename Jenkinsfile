@@ -32,8 +32,34 @@ pipeline {
                 }
             }
 
-       
         
+        stage("Rollback Changes") {
+            steps {
+                script {
+                    // Assuming $COMMIT_TO_ROLLBACK contains the commit hash you want to rollback
+                    def commitToRollback = 'COMMIT_TO_ROLLBACK_HASH'
+
+                    // Step 1: Checkout the branch
+                    git branch: 'main', credentialsId: 'rajsekhar', url: 'https://github.com/tortoise-NRI/Backend-poc.git'
+
+                    // Step 2: Perform rollback using git reset --hard
+                    sh "git reset --hard ${commitToRollback}"
+
+                    // Step 3: Push the changes to the remote repository
+                    sh 'git push -f origin main' // Use force push with caution
+
+                    // Alternatively, you might need to use credentials to push the changes if required
+                    // sh 'git push -f https://username:password@github.com/username/repo.git main'
+                }
+            }
+        }
+        
+
+        stage ("checkout from GIT") {
+            steps {
+                git branch: 'main', credentialsId: 'rajsekhar', url: 'https://github.com/tortoise-NRI/Backend-poc.git'
+            }
+        }
 
 
 
