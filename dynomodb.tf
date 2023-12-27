@@ -51,3 +51,19 @@ resource "aws_dynamodb_table" "post" {
 
 
 
+
+resource "aws_dynamodb_table" "testingrollback" {
+  name           = "testingrollback"
+  billing_mode   = "PAY_PER_REQUEST"
+
+  attribute {
+    name = "rollbackid"
+    type = "S"
+  }
+  
+
+  hash_key = "rollbackid"
+
+}
+
+
