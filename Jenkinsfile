@@ -23,7 +23,7 @@ pipeline {
                     sh "git reset --hard ${commitToRollback}"
 
                     // Step 3: Push the changes to the remote repository
-                    sh 'git push -f origin main' // Use force push with caution
+                    // sh 'git push -f origin main' // Use force push with caution
 
                     // Alternatively, you might need to use credentials to push the changes if required
                     // sh 'git push -f https://username:password@github.com/username/repo.git main'
@@ -35,11 +35,11 @@ pipeline {
 
 
 
-        stage ("checkout from GIT") {
-            steps {
-                git branch: 'main', credentialsId: 'rajsekhar', url: 'https://github.com/tortoise-NRI/Backend-poc.git'
-            }
-        }
+        // stage ("checkout from GIT") {
+        //     steps {
+        //         git branch: 'main', credentialsId: 'rajsekhar', url: 'https://github.com/tortoise-NRI/Backend-poc.git'
+        //     }
+        // }
 
         stage("Install Python dependencies and create zip") {
             steps {
