@@ -37,7 +37,7 @@ pipeline {
             steps {
                 script {
                     // Assuming $COMMIT_TO_ROLLBACK contains the commit hash you want to rollback
-                    def commitToRollback = 'COMMIT_TO_ROLLBACK_HASH'
+                    def commitToRollback = '86c014c24e8e3f550a45a52d2379bcdcfeae0137'
 
                     // Step 1: Checkout the branch
                     git branch: 'main', credentialsId: 'rajsekhar', url: 'https://github.com/tortoise-NRI/Backend-poc.git'
