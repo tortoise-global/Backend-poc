@@ -26,22 +26,22 @@ pipeline {
 
    agent  any
      stages {
-        stage ("checkout from GIT") {
-            steps {
-                //git branch: 'main', credentialsId: 'rajsekhar', url: 'https://github.com/tortoise-NRI/Backend-poc.git'
+        // stage ("checkout from GIT") {
+        //     steps {
+        //         //git branch: 'main', credentialsId: 'rajsekhar', url: 'https://github.com/tortoise-NRI/Backend-poc.git'
 
-               // git branch: "${params.GIT_TAG}", credentialsId: 'rajsekhar', url: 'https://github.com/tortoise-NRI/Backend-poc.git'
+        //        // git branch: "${params.GIT_TAG}", credentialsId: 'rajsekhar', url: 'https://github.com/tortoise-NRI/Backend-poc.git'
 
 
-                script {
-                    if (params.GIT_TAG) {
-                        git branch: "${params.GIT_TAG}", credentialsId: 'rajsekhar', url: 'https://github.com/tortoise-NRI/Backend-poc.git'
-                    } else {
-                        error "Git tag not provided!"
-                    }
-                }
-            }
-        }
+        //         script {
+        //             if (params.GIT_TAG) {
+        //                 git branch: "${params.GIT_TAG}", credentialsId: 'rajsekhar', url: 'https://github.com/tortoise-NRI/Backend-poc.git'
+        //             } else {
+        //                 error "Git tag not provided!"
+        //             }
+        //         }
+        //     }
+        // }
 
         stage("Install Python dependencies and create zip") {
             steps {
