@@ -50,7 +50,7 @@ resource "aws_dynamodb_table" "post" {
 }
 
 
-
+/*
 
 resource "aws_dynamodb_table" "testingrollback" {
   name           = "testingrollback"
@@ -65,6 +65,8 @@ resource "aws_dynamodb_table" "testingrollback" {
   hash_key = "rollbackid"
 
 }
+
+*/
 
 
 
