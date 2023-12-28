@@ -46,11 +46,11 @@ pipeline {
 
 
 
-        stage ("checkout from GIT") {
-            steps {
-                git branch: 'main', credentialsId: 'rajsekhar', url: 'https://github.com/tortoise-NRI/Backend-poc.git'
-            }
-        }
+        // stage ("checkout from GIT") {
+        //     steps {
+        //         git branch: 'main', credentialsId: 'rajsekhar', url: 'https://github.com/tortoise-NRI/Backend-poc.git'
+        //     }
+        // }
 
         stage("Install Python dependencies and create zip") {
             steps {
