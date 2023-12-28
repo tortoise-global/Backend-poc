@@ -18,13 +18,16 @@ pipeline {
             steps {
                 // git branch: 'main', credentialsId: 'rajsekhar', url: 'https://github.com/tortoise-NRI/Backend-poc.git'
 
-                script {
-                    if (params.GIT_TAG) {
-                        git branch: "${params.GIT_TAG}", credentialsId: 'rajsekhar', url: 'https://github.com/tortoise-NRI/Backend-poc.git'
-                    } else {
-                        error "Git tag not provided!"
-                    }
-                }
+                git branch: "${params.GIT_TAG}", credentialsId: 'rajsekhar', url: 'https://github.com/tortoise-NRI/Backend-poc.git'
+
+
+                // script {
+                //     if (params.GIT_TAG) {
+                //         git branch: "${params.GIT_TAG}", credentialsId: 'rajsekhar', url: 'https://github.com/tortoise-NRI/Backend-poc.git'
+                //     } else {
+                //         error "Git tag not provided!"
+                //     }
+                // }
             }
         }
 
