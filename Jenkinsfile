@@ -1,8 +1,20 @@
 
 pipeline {
 
-     parameters {
-        string(name: 'GIT_TAG', defaultValue: '', description: 'Enter the Git tag to checkout')
+    //  parameters {
+    //     string(name: 'GIT_TAG', defaultValue: '', description: 'Enter the Git tag to checkout')
+    // }
+
+    parameters {
+        gitParameter(
+            name: 'GIT_TAG',
+            branchFilter: '.*',
+            defaultValue: 'main',
+            description: 'Select a Git tag',
+            type: 'PT_TAG',
+            quickFilterEnabled: false,
+            sortMode: 'DESCENDING_SMART'
+        )
     }
 
 
@@ -16,18 +28,18 @@ pipeline {
      stages {
         stage ("checkout from GIT") {
             steps {
-                // git branch: 'main', credentialsId: 'rajsekhar', url: 'https://github.com/tortoise-NRI/Backend-poc.git'
+                //git branch: 'main', credentialsId: 'rajsekhar', url: 'https://github.com/tortoise-NRI/Backend-poc.git'
 
-                git branch: "${params.GIT_TAG}", credentialsId: 'rajsekhar', url: 'https://github.com/tortoise-NRI/Backend-poc.git'
+               // git branch: "${params.GIT_TAG}", credentialsId: 'rajsekhar', url: 'https://github.com/tortoise-NRI/Backend-poc.git'
 
 
-                // script {
-                //     if (params.GIT_TAG) {
-                //         git branch: "${params.GIT_TAG}", credentialsId: 'rajsekhar', url: 'https://github.com/tortoise-NRI/Backend-poc.git'
-                //     } else {
-                //         error "Git tag not provided!"
-                //     }
-                // }
+                script {
+                    if (params.GIT_TAG) {
+                        git branch: "${params.GIT_TAG}", credentialsId: 'rajsekhar', url: 'https://github.com/tortoise-NRI/Backend-poc.git'
+                    } else {
+                        error "Git tag not provided!"
+                    }
+                }
             }
         }
 
