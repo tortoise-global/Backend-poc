@@ -33,11 +33,14 @@ pipeline {
                 script {
                     // Get the selected Git tag from the parameter
                     def selectedTag = params.GIT_TAG
+
+                    git branch: "refs/tags/${selectedTag}", credentialsId: 'rajsekhar', url: 'https://github.com/tortoise-NRI/Backend-poc.git'
+
                     
-                    // Checkout the code associated with the selected tag
-                    checkout([$class: 'GitSCM', 
-                              branches: [[name: "refs/tags/${selectedTag}"]],
-                              userRemoteConfigs: [[url: 'https://github.com/tortoise-NRI/Backend-poc.git', credentialsId: 'rajsekhar']]])
+                    // // Checkout the code associated with the selected tag
+                    // checkout([$class: 'GitSCM', 
+                    //           branches: [[name: "refs/tags/${selectedTag}"]],
+                    //           userRemoteConfigs: [[url: 'https://github.com/tortoise-NRI/Backend-poc.git', credentialsId: 'rajsekhar']]])
                 }
                 //git branch: 'main', credentialsId: 'rajsekhar', url: 'https://github.com/tortoise-NRI/Backend-poc.git'
 
