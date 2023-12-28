@@ -37,7 +37,7 @@ pipeline {
                     // Checkout the code associated with the selected tag
                     checkout([$class: 'GitSCM', 
                               branches: [[name: "refs/tags/${selectedTag}"]],
-                              userRemoteConfigs: [[url: 'https://github.com/tortoise-NRI/Backend-poc.git']]])
+                              userRemoteConfigs: [[url: 'https://github.com/tortoise-NRI/Backend-poc.git', credentialsId: 'rajsekhar']]])
                 }
                 //git branch: 'main', credentialsId: 'rajsekhar', url: 'https://github.com/tortoise-NRI/Backend-poc.git'
 
