@@ -26,22 +26,33 @@ pipeline {
 
    agent  any
      stages {
-        // stage ("checkout from GIT") {
-        //     steps {
-        //         //git branch: 'main', credentialsId: 'rajsekhar', url: 'https://github.com/tortoise-NRI/Backend-poc.git'
-
-        //        // git branch: "${params.GIT_TAG}", credentialsId: 'rajsekhar', url: 'https://github.com/tortoise-NRI/Backend-poc.git'
+        stage ("checkout from GIT") {
+            steps {
 
 
-        //         script {
-        //             if (params.GIT_TAG) {
-        //                 git branch: "${params.GIT_TAG}", credentialsId: 'rajsekhar', url: 'https://github.com/tortoise-NRI/Backend-poc.git'
-        //             } else {
-        //                 error "Git tag not provided!"
-        //             }
-        //         }
-        //     }
-        // }
+                script {
+                    // Get the selected Git tag from the parameter
+                    def selectedTag = params.GIT_TAG
+                    
+                    // Checkout the code associated with the selected tag
+                    checkout([$class: 'GitSCM', 
+                              branches: [[name: "refs/tags/${selectedTag}"]],
+                              userRemoteConfigs: [[url: 'https://github.com/tortoise-NRI/Backend-poc.git']]])
+                }
+                //git branch: 'main', credentialsId: 'rajsekhar', url: 'https://github.com/tortoise-NRI/Backend-poc.git'
+
+               // git branch: "${params.GIT_TAG}", credentialsId: 'rajsekhar', url: 'https://github.com/tortoise-NRI/Backend-poc.git'
+
+
+                // script {
+                //     if (params.GIT_TAG) {
+                //         git branch: "${params.GIT_TAG}", credentialsId: 'rajsekhar', url: 'https://github.com/tortoise-NRI/Backend-poc.git'
+                //     } else {
+                //         error "Git tag not provided!"
+                //     }
+                // }
+            }
+        }
 
         stage("Install Python dependencies and create zip") {
             steps {
