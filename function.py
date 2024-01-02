@@ -89,7 +89,7 @@ def lambda_handler(event, context):
                     'body': request_json['body'],
                     'mediacontent': request_json['mediacontent'],
                     'creationdate': request_json['creationdate'],
-                    'likecounts': {"N":request_json['likecounts']},
+                    # 'likecounts': {"N":request_json['likecounts']},
                     #'commentcounts': int(request_json['commentcounts']),
                     #'postseencount': int(request_json['postseencount']),
                     'tags': request_json['tags'],
