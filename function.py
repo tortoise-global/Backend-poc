@@ -154,6 +154,39 @@ def lambda_handler(event, context):
                     'headers': headers
                 }
 
+
+
+        if http_method == 'POST' and route == '/sendemail':
+            request_json = json.loads(event['body'])
+
+            # data = create_user(request_json["useremail"],request_json["permanentpassword"])
+
+            otp = generateOTP()
+
+            if request_json['email']:
+                subject = 'TURTIL'
+                aws_response = email_service(request_json['email'],subject,request_json['messagetype'],request_json['apptype'],otp)
+                print("email",aws_response)
+            
+            else:
+
+                aws_response = {}
+
+                aws_response:"please_enter_your_email"
+
+
+            print("asdfg",data)
+            print(type(data))
+            body = json.dumps({aws_response})
+            # body = data
+
+
+
+            return {
+                'statusCode': status_code,
+                'body': body,
+                'headers': headers
+            }
         # # update post
         # elif http_method == 'PUT' and route == '/post':
         #     request_json = json.loads(event['body'])
@@ -334,3 +367,105 @@ def decode_cognito_token(token):
 
 
 #hello world
+
+# common functions
+def generateOTP():
+    import math
+    import random
+    digits = "1234567891"
+    OTP = ""
+    for i in range(5):
+        OTP += digits[math.floor(random.random() * 10)]
+    return OTP
+
+
+
+def email_service(to_address,subject,messagetype,apptype,otp):
+
+    import os
+    import boto3
+    from botocore.exceptions import ClientError
+    from email.mime.multipart import MIMEMultipart
+    from email.mime.text import MIMEText
+    from email.mime.application import MIMEApplication
+
+    SENDER = "karthik@iconsoftwareinc.com"
+
+    RECIPIENT = to_address
+
+    # If necessary, replace us-west-2 with the AWS Region you're using for Amazon SES.
+    AWS_REGION = "ap-south-1"
+
+    # The subject line for the email.
+    SUBJECT = subject.upper()
+    # sendfrom = "EMAIL"
+
+    # body = message_template_for_forgot_password(messagetype,apptype,otp,sendfrom)
+
+    # print("hey"+body)
+
+    
+    if messagetype == 'OTP':
+        # body = "Your OTP for "+apptype.upper()+" is "+otp +' \nThank you \nVISEPL'
+        body = """\
+        <!DOCTYPE html>
+        <html>
+        <body>
+        <p>Your OTP for """+apptype.upper()+""" is <span style="text-decoration: underline">"""+otp+"""</span> </p>
+        <p>Thank you, <br/> TURTIL.</p>
+
+        </body>
+        </html>
+        """
+    
+
+    # The HTML body of the email.
+    BODY_HTML = """\
+    <html>
+    <head></head>
+    <body>
+    <p>""" + body + """</p>
+    </body>
+    </html>
+    """
+   
+
+    # The character encoding for the email.
+    CHARSET = "utf-8"
+
+    # Create a new SES resource and specify a region.
+    client = boto3.client('ses',region_name=AWS_REGION)
+
+    # Create a multipart/mixed parent container.
+    msg = MIMEMultipart('mixed')
+
+    # Add subject, from and to lines.
+    msg['Subject'] = SUBJECT 
+    msg['From'] = SENDER 
+    msg['To'] = RECIPIENT
+
+    # Create a multipart/alternative child container.
+    msg_body = MIMEMultipart('alternative')
+
+    # Encode the text and HTML content and set the character encoding. This step is
+    # necessary if you're sending a message with characters outside the ASCII range.
+    htmlpart = MIMEText(BODY_HTML.encode(CHARSET), 'html', CHARSET)
+
+    # Add the text and HTML parts to the child container.
+    msg_body.attach(htmlpart)
+
+    # Attach the multipart/alternative child container to the multipart/mixed
+    # parent container.
+    msg.attach(msg_body)
+
+    try:
+        response = client.send_raw_email(Source=SENDER,Destinations=[RECIPIENT],RawMessage={'Data':msg.as_string(),},)
+        return response
+
+    except ClientError as e:
+        print(e.response['Error']['Message'])
+    # else:
+    #     print("Email sent! Message ID:"),
+    #     print(response['MessageId'])
+    
+    # return response
