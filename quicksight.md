@@ -639,7 +639,7 @@ def user_analytics():
 ### Click on "Add Data Base".
 <img width="1440" alt="Screenshot 2024-07-26 at 7 38 51 AM" src="https://github.com/user-attachments/assets/99330615-e713-47ea-b550-d87fae6726d6">
 
-### Give Your  "Add Data Base".
+### Give Your  "Add Data Base" Click on "Create Data Base".
 <img width="1440" alt="Screenshot 2024-07-26 at 7 39 15 AM" src="https://github.com/user-attachments/assets/2e5d687b-c5f3-44e1-9272-7982a219d611">
 
 
