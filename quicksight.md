@@ -620,61 +620,214 @@ def user_analytics():
 ### Choose the S3 Folder Click "Choose". i.e which your Created in your Lambda Function by python code In this case User folder is selected, the code is STEP-2 the path  "JOBS/Analytics-lambda/analytics_every_day_schedule/lambda_fun.py".
 <img width="1440" alt="Screenshot 2024-07-26 at 7 35 44 AM" src="https://github.com/user-attachments/assets/e4368a1b-ae16-4922-8c7c-d5a2dbc9eb4d">
 
-### Click " Add a data souce".
+### Click " Add a S3 data souce".
 <img width="1440" alt="Screenshot 2024-07-26 at 7 35 55 AM" src="https://github.com/user-attachments/assets/c0e2c87f-8995-4831-8747-703300cc04b0">
 
 ### Click " Next".
 <img width="1440" alt="Screenshot 2024-07-26 at 7 36 02 AM" src="https://github.com/user-attachments/assets/75e57350-1f53-4aa5-b3e0-9a40b5da1725">
 
 
-### Click on "New Im Role".
+### Click on " Create new IAM Role".
 <img width="1440" alt="Screenshot 2024-07-26 at 7 36 17 AM" src="https://github.com/user-attachments/assets/fd700dc6-84c7-4623-a920-0eff64a37831">
 
-### Give your "New Im Role Name" click "create".
+### Enter your New  "IAM Role Name" click "create".
 <img width="1440" alt="Screenshot 2024-07-26 at 7 37 53 AM" src="https://github.com/user-attachments/assets/681806b4-433f-4edf-9ed3-3a9dd89bc6d5">
 
 ### Click on "Next".
 <img width="1440" alt="Screenshot 2024-07-26 at 7 38 07 AM" src="https://github.com/user-attachments/assets/39952da0-e133-4a0e-84e4-252edeca8d1e">
 
-### Click on "Add Data Base".
+### Click on "Add DataBase".
 <img width="1440" alt="Screenshot 2024-07-26 at 7 38 51 AM" src="https://github.com/user-attachments/assets/99330615-e713-47ea-b550-d87fae6726d6">
 
-### Give Your  "Add Data Base" Click on "Create Data Base".
+### Enter Your  "DataBase Name" Click on "Create DataBase".
 <img width="1440" alt="Screenshot 2024-07-26 at 7 39 15 AM" src="https://github.com/user-attachments/assets/2e5d687b-c5f3-44e1-9272-7982a219d611">
 
-
+### select Your Target Database(in this case, "my-app-user-1") and Click on "Advanced option" in that Tick the checkbox Create a Single Schema for Each S3 Path.
 <img width="1440" alt="Screenshot 2024-07-26 at 7 39 39 AM" src="https://github.com/user-attachments/assets/3cf9a021-cb9f-45e0-96e2-d440d293e6a1">
 
-
+### Scrolldown and  Click on "Next"
 <img width="1440" alt="Screenshot 2024-07-26 at 7 39 50 AM" src="https://github.com/user-attachments/assets/e5f38330-ce3c-4c2d-96db-196593be29f9">
 
-
+### It will navigate to Review and create
 <img width="1440" alt="Screenshot 2024-07-26 at 7 40 03 AM" src="https://github.com/user-attachments/assets/e855d455-a9e4-4e78-8acc-3b0298e7b44e">
 
-
+### Scrolldown and  Click on "create crawler"
 <img width="1440" alt="Screenshot 2024-07-26 at 7 40 12 AM" src="https://github.com/user-attachments/assets/1eea79ce-be20-4188-90bb-47fab7aa663b">
 
 
+
+### It will navigate to Your Give Creawler Name (in this case, "my-app-user-1") and Click on "Crawlers" in the left sidebar menu.
+
 <img width="1440" alt="Screenshot 2024-07-26 at 7 43 41 AM" src="https://github.com/user-attachments/assets/4932f6ad-feba-4375-83ae-0f7f9ca2ff55">
 
-
+ ### Select Your Give Creawler Name (in this case, "my-app-user-1") and Click on "Run"
 <img width="1440" alt="Screenshot 2024-07-26 at 7 43 54 AM" src="https://github.com/user-attachments/assets/4457eda2-fef3-45ae-8b83-eec32f0c3c0a">
 
-
+### when  It will Show State is Ready and Last Run is Success in Your Give Creawler Name (in this case, "my-app-user-1") and Click on "Tables" in the left sidebar menu
 <img width="1440" alt="Screenshot 2024-07-26 at 7 44 19 AM" src="https://github.com/user-attachments/assets/1feb7620-4f3a-48a0-b981-7599993c4328">
 
-
+### Click on the list which have your database (in this case, "my-app-user-1")
 <img width="1440" alt="Screenshot 2024-07-26 at 7 44 29 AM" src="https://github.com/user-attachments/assets/05d28633-d179-47d0-b148-046159a318d6">
 
-
+### It will navigate to this page which information of your database (in this case, "my-app-user-1")
 <img width="1440" alt="Screenshot 2024-07-26 at 7 44 49 AM" src="https://github.com/user-attachments/assets/da741280-4d98-4ede-bd7d-4259b9905fcf">
 
-
+### Scrolldown check in schema column names are there are not if its then your aws glue configured correctly if not please follow the Step-3
 <img width="1440" alt="Screenshot 2024-07-26 at 7 44 54 AM" src="https://github.com/user-attachments/assets/de6734fc-763c-41c2-84f3-ce7e62724ca0">
 
 
 
+### Setup  and Configure Aws Anthena
 
+### In the AWS console, navigate to Amazon S3 Bucket (in this case,  "turtil-analytics").
+### Click on "Create Folder"
+<img width="1440" alt="Screenshot 2024-07-29 at 7 31 43 AM" src="https://github.com/user-attachments/assets/9cdfb3b9-4c4b-4f33-ae67-293e8768871c">
+
+### Enter your Folder Name (in this case,  "output")
+<img width="1440" alt="Screenshot 2024-07-29 at 7 31 57 AM" src="https://github.com/user-attachments/assets/73532265-f42c-4746-9991-68a0ec127bbd">
+
+### Scrolldown Click on "Create Folder"
+<img width="1440" alt="Screenshot 2024-07-29 at 7 32 02 AM" src="https://github.com/user-attachments/assets/6edd92eb-346f-4736-b529-3b6b2d1f11ab">
+
+### You can see  your Folder is Created (in this case,  "output") in Your S3 bucket (in this case,  "turtil-analytics").
+<img width="1440" alt="Screenshot 2024-07-29 at 7 32 20 AM" src="https://github.com/user-attachments/assets/43020b8d-5281-4700-9339-60cf81b4d29c">
+
+
+### In the AWS console, navigate to AWS Athena.
+### Click on "Query Editor Tabs" in the left sidebar menu.
+<img width="1440" alt="Screenshot 2024-07-29 at 7 28 13 AM" src="https://github.com/user-attachments/assets/8b8af499-9b01-400b-8c02-f930ca1d874b">
+
+
+### Click the "Setting".
+<img width="1440" alt="Screenshot 2024-07-29 at 7 29 01 AM" src="https://github.com/user-attachments/assets/014f2408-77fb-4d5a-aecf-6a983c7b9cbb">
+
+
+### Click the "Manage" button.
+<img width="1440" alt="Screenshot 2024-07-29 at 7 29 07 AM" src="https://github.com/user-attachments/assets/290d2eaf-32a3-4810-8554-947c5afaf7e0">
+
+### Click the "Browse S3" button.
+<img width="1440" alt="Screenshot 2024-07-29 at 7 29 21 AM" src="https://github.com/user-attachments/assets/601b265c-55ee-41f8-8260-455d464dce7a">
+
+
+
+### Enter Your  "S3 Bucket Name" in the Search bar and  Click Your  "S3 Bucket Name" (in this case,  "turtil-analytics").
+<img width="1440" alt="Screenshot 2024-07-29 at 7 30 27 AM" src="https://github.com/user-attachments/assets/27434a9b-019b-45f2-881d-2602bc80863d">
+
+
+### Click  on  "output"  and Click on  "choose" button
+<img width="1440" alt="Screenshot 2024-07-29 at 7 30 37 AM" src="https://github.com/user-attachments/assets/e73da542-4b2d-4ca7-bc50-e3e358f0af69">
+
+
+### Click on  "Save" button
+<img width="1440" alt="Screenshot 2024-07-29 at 7 30 54 AM" src="https://github.com/user-attachments/assets/d2e21ae8-dc4a-4fd9-a281-c24734280d38">
+
+
+
+### Click on  "Run again" button
+<img width="1440" alt="Screenshot 2024-07-29 at 7 32 49 AM" src="https://github.com/user-attachments/assets/27940481-a4dc-4d00-bf6b-b342f0da8638">
+
+
+
+# STEP-4
+
+## QuickSight setup
+
+
+### In the AWS console, search quicksight.
+### Click on  quicksight
+<img width="1440" alt="Screenshot 2024-07-29 at 8 19 07 AM" src="https://github.com/user-attachments/assets/fb0aa92e-f322-444e-9412-414a0c630e12">
+
+### It will  navigate to this page and Enter Your mail addess and click on continue
+<img width="1440" alt="Screenshot 2024-07-29 at 8 19 12 AM" src="https://github.com/user-attachments/assets/b4a53939-9183-455f-a39c-de8117df00dd">
+
+### It will  navigate to this page
+<img width="1440" alt="Screenshot 2024-07-29 at 8 19 40 AM" src="https://github.com/user-attachments/assets/d47b0222-975b-4a86-90d8-bf0ed67c7481">
+
+### click on manage qiucksight
+<img width="1440" alt="Screenshot 2024-07-29 at 8 45 21 AM" src="https://github.com/user-attachments/assets/b2003fb0-1743-463a-b90d-1ac869863c46">
+
+
+### click on manage
+
+<img width="1440" alt="Screenshot 2024-07-29 at 8 21 42 AM" src="https://github.com/user-attachments/assets/05e79ef5-5d9a-4376-91bc-475ace54a0fd">
+
+### select S3 buckets
+<img width="1440" alt="Screenshot 2024-07-29 at 8 22 18 AM" src="https://github.com/user-attachments/assets/7a63cbe5-bd5c-4612-8f47-5db4ff46eef5">
+
+### Tick your  S3 buckets and write permmission for Athena and Click on finish
+<img width="1440" alt="Screenshot 2024-07-29 at 8 23 02 AM" src="https://github.com/user-attachments/assets/d47c7f78-08b0-4c0e-8a34-baa352c6b9df">
+
+### Click on save
+<img width="1440" alt="Screenshot 2024-07-29 at 8 23 11 AM" src="https://github.com/user-attachments/assets/6770d00e-3492-4957-b871-bc42ff99eb7e">
+
+
+### click on qiucksight on left top corner
+<img width="1440" alt="Screenshot 2024-07-29 at 8 21 42 AM" src="https://github.com/user-attachments/assets/05e79ef5-5d9a-4376-91bc-475ace54a0fd">
+
+
+### It will  navigate to this page
+<img width="1440" alt="Screenshot 2024-07-29 at 8 19 40 AM" src="https://github.com/user-attachments/assets/d47b0222-975b-4a86-90d8-bf0ed67c7481">
+
+
+### click on datasets and  click on  New dataset button
+<img width="1440" alt="Screenshot 2024-07-29 at 8 25 45 AM" src="https://github.com/user-attachments/assets/0eb2ff1f-71f0-4553-bf78-b6becfd16151">
+
+### select Athena
+<img width="1440" alt="Screenshot 2024-07-29 at 8 29 25 AM" src="https://github.com/user-attachments/assets/d4f8330b-ab4a-4963-825c-5bdeab60190f">
+
+### give your data source name and   click on create data source button
+<img width="1440" alt="Screenshot 2024-07-29 at 8 29 48 AM" src="https://github.com/user-attachments/assets/2817ed40-a6c2-454c-bdd7-a153a9304364">
+
+### choose your table click on "Use custom SQL"
+<img width="1440" alt="Screenshot 2024-07-29 at 8 30 09 AM" src="https://github.com/user-attachments/assets/add6c1b9-b39c-4167-8a59-7375d9915efc">
+
+### Give the name to your query and enter the custom query and click "Edit/previewData"
+<img width="1440" alt="Screenshot 2024-07-29 at 8 31 40 AM" src="https://github.com/user-attachments/assets/817bb12a-e44f-4580-b1e2-4d5024beb6fa">
+
+### It will  navigate to this page, slect your database in leftside and click on apply button
+<img width="1440" alt="Screenshot 2024-07-29 at 8 32 04 AM" src="https://github.com/user-attachments/assets/6541a5a7-6c56-465f-8a9b-52965c46c0ad">
+
+### it will give the  dataset results and click on "save & publish"
+<img width="1440" alt="Screenshot 2024-07-29 at 8 32 16 AM" src="https://github.com/user-attachments/assets/942c4905-96ec-47f0-895d-50ad65b9d797">
+
+### click on  "publish & visualize"
+<img width="1440" alt="Screenshot 2024-07-29 at 8 32 32 AM" src="https://github.com/user-attachments/assets/310e3faf-7559-4ed5-9efb-195c482388e5">
+
+
+### click on  "create" button
+<img width="1440" alt="Screenshot 2024-07-29 at 8 32 58 AM" src="https://github.com/user-attachments/assets/023fcef4-7f21-4818-9890-5ba10d35095d">
+
+### select the visual type donut type and  select calulated field  date to  get "count of records by date" and click on publish
+<img width="1440" alt="Screenshot 2024-07-29 at 8 34 34 AM" src="https://github.com/user-attachments/assets/cf647cce-5a68-4029-abc3-75fcf4fc8f57">
+
+### Give the name to your publish dashboard and  click  on "publish dashboard" button
+<img width="1440" alt="Screenshot 2024-07-29 at 8 35 09 AM" src="https://github.com/user-attachments/assets/89acc328-297a-4c5c-b9cd-536ba9ce28f5">
+
+### it will show like this and click on share
+<img width="1440" alt="Screenshot 2024-07-29 at 8 35 26 AM" src="https://github.com/user-attachments/assets/619fc9a5-4018-4d69-8654-d0f3c179dd3a">
+
+
+### click on share dashboard
+<img width="1440" alt="Screenshot 2024-07-29 at 8 35 32 AM" src="https://github.com/user-attachments/assets/75c9914f-00f6-467c-8841-58f9c056a371">
+
+### It will  navigate to this page, in the leftside search bar enter the user name whom you want to share this dashboard and click on Add
+<img width="1440" alt="Screenshot 2024-07-29 at 8 36 42 AM" src="https://github.com/user-attachments/assets/a9a607c9-82c5-4b19-a7b1-2ada18fe2eba">
+
+### click on viewer
+<img width="1440" alt="Screenshot 2024-07-29 at 8 36 46 AM" src="https://github.com/user-attachments/assets/8cf1e1ee-a26d-4009-87e2-ce172c2fe323">
+
+### in user & groups it will show the added users
+<img width="1440" alt="Screenshot 2024-07-29 at 8 36 54 AM" src="https://github.com/user-attachments/assets/067d3939-971d-432c-be6b-d4bcd1fabc74">
+
+
+### click on copy link
+<img width="1440" alt="Screenshot 2024-07-29 at 8 37 03 AM" src="https://github.com/user-attachments/assets/49d550af-b254-4d94-b8a1-acef03d195aa">
+
+### copy that link in other tab or share that link to users which are added in user & groups 
+<img width="1440" alt="Screenshot 2024-07-29 at 8 37 16 AM" src="https://github.com/user-attachments/assets/280cffe8-3dcb-4b52-8a49-85ffb1af6084">
+
+### Published Dashboard Output
+<img width="1440" alt="Screenshot 2024-07-29 at 8 37 23 AM" src="https://github.com/user-attachments/assets/7e632048-b851-4055-9b25-6b792caf6930">
 
 
 
